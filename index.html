@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Educational Game Hub</title>
+<title>Advanced Educational Game Hub</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -29,50 +29,93 @@
 
 <div class="games">
   <div class="card" onclick="show('math')">Math Puzzle</div>
+  <div class="card" onclick="show('compare')">Compare Numbers</div>
   <div class="card" onclick="show('word')">Word Scramble</div>
+  <div class="card" onclick="show('spell')">Spell Check</div>
   <div class="card" onclick="show('table')">Table Practice</div>
   <div class="card" onclick="show('gk')">GK Quiz</div>
+  <div class="card" onclick="show('cs')">Computer Quiz</div>
   <div class="card" onclick="show('logic')">Logic Puzzle</div>
+  <div class="card" onclick="show('odd')">Odd One Out</div>
 </div>
 
+<!-- Math -->
 <div id="math" class="game hidden">
-  <h3 id="mathTitle">Math Puzzle</h3>
-  <p id="mathQ"></p>
-  <input type="number" id="mathAns">
-  <button onclick="checkMath()">Check</button>
-  <p id="mathMsg"></p>
+<h3>Math Puzzle</h3>
+<p id="mathQ"></p>
+<input type="number" id="mathAns">
+<button onclick="checkMath()">Check</button>
+<p id="mathMsg"></p>
 </div>
 
+<!-- Compare -->
+<div id="compare" class="game hidden">
+<h3>Compare Numbers</h3>
+<p id="cmpQ"></p>
+<button onclick="checkCmp('>')">></button>
+<button onclick="checkCmp('<')"><</button>
+<button onclick="checkCmp('=')">=</button>
+<p id="cmpMsg"></p>
+</div>
+
+<!-- Word -->
 <div id="word" class="game hidden">
-  <h3>Word Scramble</h3>
-  <p id="scrambled"></p>
-  <input id="wordAns">
-  <button onclick="checkWord()">Check</button>
-  <p id="wordMsg"></p>
+<h3>Word Scramble</h3>
+<p id="scrambled"></p>
+<input id="wordAns">
+<button onclick="checkWord()">Check</button>
+<p id="wordMsg"></p>
 </div>
 
+<!-- Spell -->
+<div id="spell" class="game hidden">
+<h3>Spell Correction</h3>
+<p id="spellQ"></p>
+<input id="spellAns">
+<button onclick="checkSpell()">Check</button>
+<p id="spellMsg"></p>
+</div>
+
+<!-- Table -->
 <div id="table" class="game hidden">
-  <h3>Table Practice</h3>
-  <p id="tableQ"></p>
-  <input id="tableAns">
-  <button onclick="checkTable()">Check</button>
-  <p id="tableMsg"></p>
+<h3>Table Practice</h3>
+<p id="tableQ"></p>
+<input id="tableAns">
+<button onclick="checkTable()">Check</button>
+<p id="tableMsg"></p>
 </div>
 
+<!-- GK -->
 <div id="gk" class="game hidden">
-  <h3>GK Quiz</h3>
-  <p id="gkQ">Capital of India?</p>
-  <button onclick="checkGK('Delhi')">Delhi</button>
-  <button onclick="checkGK('Mumbai')">Mumbai</button>
-  <p id="gkMsg"></p>
+<h3>GK Quiz</h3>
+<p id="gkQ"></p>
+<div id="gkOpt"></div>
+<p id="gkMsg"></p>
 </div>
 
+<!-- CS -->
+<div id="cs" class="game hidden">
+<h3>Computer Quiz</h3>
+<p id="csQ"></p>
+<div id="csOpt"></div>
+<p id="csMsg"></p>
+</div>
+
+<!-- Logic -->
 <div id="logic" class="game hidden">
-  <h3>Logic Puzzle</h3>
-  <p id="logicQ"></p>
-  <input id="logicAns">
-  <button onclick="checkLogic()">Check</button>
-  <p id="logicMsg"></p>
+<h3>Logic Puzzle</h3>
+<p id="logicQ"></p>
+<input id="logicAns">
+<button onclick="checkLogic()">Check</button>
+<p id="logicMsg"></p>
+</div>
+
+<!-- Odd -->
+<div id="odd" class="game hidden">
+<h3>Odd One Out</h3>
+<p id="oddQ"></p>
+<div id="oddOpt"></div>
+<p id="oddMsg"></p>
 </div>
 
 <button onclick="showReport()">Show Report</button>
