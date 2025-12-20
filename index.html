@@ -1,56 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Super Advanced Educational Game Hub</title>
+<title>Educational Game Hub Pro</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <header>🎓 Educational Game Hub Pro</header>
 
 <div class="dashboard">
-  <div>
-    Class:
-    <select id="level" onchange="setLevel()">
-      <option value="easy">1–3</option>
-      <option value="medium">4–6</option>
-      <option value="hard">7–10</option>
-    </select>
-  </div>
+  Class:
+  <select id="level">
+    <option value="easy">1–3</option>
+    <option value="medium">4–6</option>
+    <option value="hard">7–10</option>
+  </select>
 
-  <div id="stats">
-    Score: <span id="score">0</span> |
-    Attempt: <span id="attempt">0</span> |
-    Accuracy: <span id="accuracy">0%</span>
-  </div>
-
-  <div id="timerBox">⏱ <span id="time">60</span>s</div>
+  <span id="stats">
+    Score: <b id="score">0</b> |
+    Attempt: <b id="attempt">0</b>
+  </span>
 </div>
 
 <div class="menu">
   <button onclick="loadGame('math')">Math</button>
   <button onclick="loadGame('compare')">Compare</button>
   <button onclick="loadGame('word')">Word</button>
-  <button onclick="loadGame('spell')">Spell</button>
-  <button onclick="loadGame('table')">Table</button>
-  <button onclick="loadGame('gk')">GK</button>
-  <button onclick="loadGame('cs')">Computer</button>
   <button onclick="loadGame('logic')">Logic</button>
   <button onclick="loadGame('odd')">Odd One</button>
 </div>
 
 <div class="gameBox">
-  <h3 id="question"></h3>
+  <h3 id="question">Select a game</h3>
   <div id="options"></div>
-  <input id="answer" placeholder="Type answer if needed">
+  <input id="answer" placeholder="Type answer">
   <button onclick="submitAnswer()">Submit</button>
   <p id="feedback"></p>
 </div>
 
-<button onclick="showReport()">📄 Final Report</button>
+<button onclick="showReport()">Final Report</button>
 <p id="report"></p>
 
 <script src="script.js"></script>
