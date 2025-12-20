@@ -23,13 +23,13 @@ header{
 
 .games{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:15px;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
 }
 
 .card{
   background:#1e293b;
-  padding:15px;
+  padding:14px;
   border-radius:10px;
   text-align:center;
   cursor:pointer;
@@ -51,7 +51,7 @@ header{
 }
 
 button{
-  padding:8px 14px;
+  padding:7px 14px;
   margin:5px;
   border:none;
   border-radius:5px;
