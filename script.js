@@ -1,157 +1,92 @@
-let level="easy", lang="en";
-let score=0, total=0;
+let level="easy";
+let score=0, attempt=0;
+let correctAnswer="";
+let time=60, timer;
 
-function show(id){
- document.querySelectorAll('.game').forEach(g=>g.classList.add('hidden'));
- document.getElementById(id).classList.remove('hidden');
-}
-
-function setLevel(){ generateAll(); }
-
-function updateScore(c){
- total++;
- if(c) score++;
- document.getElementById("scoreBox").innerText=`Score: ${score} / ${total}`;
+function setLevel(){
+  startTimer();
 }
 
-/* Math */
-function genMath(){
- let a=Math.floor(Math.random()*(level=="easy"?10:level=="medium"?50:100));
- let b=Math.floor(Math.random()*(level=="easy"?10:level=="medium"?50:100));
- window.mathAns=a+b;
- document.getElementById("mathQ").innerText=`${a} + ${b} = ?`;
-}
-function checkMath(){
- let c=document.getElementById("mathAns").value==window.mathAns;
- updateScore(c);
- document.getElementById("mathMsg").innerText=c?"Correct":"Wrong";
- genMath();
-}
-
-/* Compare */
-let x,y,cmp;
-function genCmp(){
- x=Math.floor(Math.random()*20);
- y=Math.floor(Math.random()*20);
- cmp=x>y?">":x<y?"<":"=";
- document.getElementById("cmpQ").innerText=`${x} ? ${y}`;
-}
-function checkCmp(a){
- let c=a==cmp;
- updateScore(c);
- document.getElementById("cmpMsg").innerText=c?"Correct":"Wrong";
- genCmp();
+function startTimer(){
+  clearInterval(timer);
+  time=60;
+  document.getElementById("time").innerText=time;
+  timer=setInterval(()=>{
+    time--;
+    document.getElementById("time").innerText=time;
+    if(time<=0){
+      clearInterval(timer);
+      showReport();
+    }
+  },1000);
 }
 
-/* Word */
-const words=["SCHOOL","TEACHER","STUDENT","COMPUTER"];
-function genWord(){
- let w=words[Math.floor(Math.random()*words.length)];
- window.wordAns=w;
- document.getElementById("scrambled").innerText=w.split('').sort(()=>0.5-Math.random()).join('');
-}
-function checkWord(){
- let c=document.getElementById("wordAns").value.toUpperCase()==window.wordAns;
- updateScore(c);
- document.getElementById("wordMsg").innerText=c?"Correct":"Wrong";
- genWord();
+function updateStats(correct){
+  attempt++;
+  if(correct) score++;
+  document.getElementById("score").innerText=score;
+  document.getElementById("attempt").innerText=attempt;
+  document.getElementById("accuracy").innerText=
+    Math.round((score/attempt)*100)+"%";
 }
 
-/* Spell */
-const spell=[["COMPUTR","COMPUTER"],["SCHOOOL","SCHOOL"]];
-function genSpell(){
- let s=spell[Math.floor(Math.random()*spell.length)];
- window.spellAns=s[1];
- document.getElementById("spellQ").innerText="Correct spelling of: "+s[0];
-}
-function checkSpell(){
- let c=document.getElementById("spellAns").value.toUpperCase()==window.spellAns;
- updateScore(c);
- document.getElementById("spellMsg").innerText=c?"Correct":"Wrong";
- genSpell();
+function loadGame(type){
+  document.getElementById("feedback").innerText="";
+  document.getElementById("answer").value="";
+  document.getElementById("options").innerHTML="";
+  startTimer();
+
+  if(type=="math"){
+    let a=Math.floor(Math.random()*20);
+    let b=Math.floor(Math.random()*20);
+    correctAnswer=a+b;
+    document.getElementById("question").innerText=`${a} + ${b} = ?`;
+  }
+
+  if(type=="compare"){
+    let a=Math.floor(Math.random()*10);
+    let b=Math.floor(Math.random()*10);
+    correctAnswer=a>b?">":a<b?"<":"=";
+    document.getElementById("question").innerText=`${a} ? ${b}`;
+    document.getElementById("options").innerHTML=
+      ['>','<','='].map(x=>`<button onclick="select('${x}')">${x}</button>`).join('');
+  }
+
+  if(type=="word"){
+    let w=["SCHOOL","STUDENT","COMPUTER"];
+    correctAnswer=w[Math.floor(Math.random()*w.length)];
+    document.getElementById("question").innerText=
+      correctAnswer.split('').sort(()=>0.5-Math.random()).join('');
+  }
+
+  if(type=="logic"){
+    correctAnswer=32;
+    document.getElementById("question").innerText="2, 4, 8, 16, ?";
+  }
+
+  if(type=="odd"){
+    correctAnswer="Car";
+    document.getElementById("question").innerText="Odd one out";
+    document.getElementById("options").innerHTML=
+      ["Apple","Banana","Car","Mango"].map(x=>`<button onclick="select('${x}')">${x}</button>`).join('');
+  }
 }
 
-/* Table */
-function genTable(){
- let x=level=="easy"?2:level=="medium"?6:12;
- let y=Math.floor(Math.random()*10);
- window.tableAns=x*y;
- document.getElementById("tableQ").innerText=`${x} × ${y} = ?`;
-}
-function checkTable(){
- let c=document.getElementById("tableAns").value==window.tableAns;
- updateScore(c);
- document.getElementById("tableMsg").innerText=c?"Correct":"Wrong";
- genTable();
+function select(val){
+  document.getElementById("answer").value=val;
 }
 
-/* GK */
-const gk=[{q:"Capital of India?",o:["Delhi","Mumbai"],a:"Delhi"}];
-function genGK(){
- let g=gk[0];
- window.gkAns=g.a;
- document.getElementById("gkQ").innerText=g.q;
- document.getElementById("gkOpt").innerHTML=
- g.o.map(o=>`<button onclick="checkGK('${o}')">${o}</button>`).join('');
-}
-function checkGK(a){
- let c=a==window.gkAns;
- updateScore(c);
- document.getElementById("gkMsg").innerText=c?"Correct":"Wrong";
+function submitAnswer(){
+  let ans=document.getElementById("answer").value;
+  let correct=ans==correctAnswer;
+  updateStats(correct);
+  document.getElementById("feedback").innerText=
+    correct?"Correct ✅":"Wrong ❌";
 }
 
-/* CS */
-const cs=[{q:"CPU stands for?",o:["Central Processing Unit","Control Program Unit"],a:"Central Processing Unit"}];
-function genCS(){
- let c=cs[0];
- window.csAns=c.a;
- document.getElementById("csQ").innerText=c.q;
- document.getElementById("csOpt").innerHTML=
- c.o.map(o=>`<button onclick="checkCS('${o}')">${o}</button>`).join('');
-}
-function checkCS(a){
- let c=a==window.csAns;
- updateScore(c);
- document.getElementById("csMsg").innerText=c?"Correct":"Wrong";
-}
-
-/* Logic */
-function genLogic(){
- let q=level=="easy"?"2,4,6, ?":level=="medium"?"2,4,8,16, ?":"3,9,27, ?";
- window.logicAns=level=="easy"?8:level=="medium"?32:81;
- document.getElementById("logicQ").innerText=q;
-}
-function checkLogic(){
- let c=document.getElementById("logicAns").value==window.logicAns;
- updateScore(c);
- document.getElementById("logicMsg").innerText=c?"Correct":"Wrong";
- genLogic();
-}
-
-/* Odd */
-function genOdd(){
- let o=["Apple","Banana","Car","Mango"];
- window.oddAns="Car";
- document.getElementById("oddQ").innerText="Find odd one out:";
- document.getElementById("oddOpt").innerHTML=
- o.map(i=>`<button onclick="checkOdd('${i}')">${i}</button>`).join('');
-}
-function checkOdd(a){
- let c=a==window.oddAns;
- updateScore(c);
- document.getElementById("oddMsg").innerText=c?"Correct":"Wrong";
-}
-
-/* Report */
 function showReport(){
- let p=total?Math.round(score/total*100):0;
- document.getElementById("report").innerText=
- `Total: ${total} | Correct: ${score} | Percentage: ${p}%`;
+  clearInterval(timer);
+  let grade=score/attempt>=0.8?"A":score/attempt>=0.5?"B":"C";
+  document.getElementById("report").innerText=
+    `Attempt: ${attempt}, Score: ${score}, Grade: ${grade}`;
 }
-
-function generateAll(){
- genMath(); genCmp(); genWord(); genSpell();
- genTable(); genGK(); genCS(); genLogic(); genOdd();
-}
-
-generateAll();
