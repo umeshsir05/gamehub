@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Educational Game Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header id="title">Educational Game Hub</header>
+
+<div class="top-bar">
+  <label>Class:</label>
+  <select id="classLevel" onchange="setLevel()">
+    <option value="easy">Class 1–3</option>
+    <option value="medium">Class 4–6</option>
+    <option value="hard">Class 7–10</option>
+  </select>
+
+  <button onclick="setLang('en')">English</button>
+  <button onclick="setLang('hi')">हिंदी</button>
+</div>
+
+<div id="scoreBox">Score: 0 / 0</div>
+
+<div class="container">
+
+<div class="games">
+  <div class="card" onclick="show('math')">Math Puzzle</div>
+  <div class="card" onclick="show('word')">Word Scramble</div>
+  <div class="card" onclick="show('table')">Table Practice</div>
+  <div class="card" onclick="show('gk')">GK Quiz</div>
+  <div class="card" onclick="show('logic')">Logic Puzzle</div>
+</div>
+
+<div id="math" class="game hidden">
+  <h3 id="mathTitle">Math Puzzle</h3>
+  <p id="mathQ"></p>
+  <input type="number" id="mathAns">
+  <button onclick="checkMath()">Check</button>
+  <p id="mathMsg"></p>
+</div>
+
+<div id="word" class="game hidden">
+  <h3>Word Scramble</h3>
+  <p id="scrambled"></p>
+  <input id="wordAns">
+  <button onclick="checkWord()">Check</button>
+  <p id="wordMsg"></p>
+</div>
+
+<div id="table" class="game hidden">
+  <h3>Table Practice</h3>
+  <p id="tableQ"></p>
+  <input id="tableAns">
+  <button onclick="checkTable()">Check</button>
+  <p id="tableMsg"></p>
+</div>
+
+<div id="gk" class="game hidden">
+  <h3>GK Quiz</h3>
+  <p id="gkQ">Capital of India?</p>
+  <button onclick="checkGK('Delhi')">Delhi</button>
+  <button onclick="checkGK('Mumbai')">Mumbai</button>
+  <p id="gkMsg"></p>
+</div>
+
+<div id="logic" class="game hidden">
+  <h3>Logic Puzzle</h3>
+  <p id="logicQ"></p>
+  <input id="logicAns">
+  <button onclick="checkLogic()">Check</button>
+  <p id="logicMsg"></p>
+</div>
+
+<button onclick="showReport()">Show Report</button>
+<p id="report"></p>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
