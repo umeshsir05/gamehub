@@ -1,47 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Educational Game Hub Pro</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Hub Test</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>🎓 Educational Game Hub Pro</header>
+<h2>🎮 Game Hub</h2>
 
-<div class="dashboard">
-  Class:
-  <select id="level">
-    <option value="easy">1–3</option>
-    <option value="medium">4–6</option>
-    <option value="hard">7–10</option>
-  </select>
+<button onclick="test()">Test Button</button>
+<button onclick="loadGame('math')">Math Game</button>
+<button onclick="loadGame('word')">Word Game</button>
 
-  <span id="stats">
-    Score: <b id="score">0</b> |
-    Attempt: <b id="attempt">0</b>
-  </span>
-</div>
-
-<div class="menu">
-  <button onclick="loadGame('math')">Math</button>
-  <button onclick="loadGame('compare')">Compare</button>
-  <button onclick="loadGame('word')">Word</button>
-  <button onclick="loadGame('logic')">Logic</button>
-  <button onclick="loadGame('odd')">Odd One</button>
-</div>
-
-<div class="gameBox">
-  <h3 id="question">Select a game</h3>
-  <div id="options"></div>
-  <input id="answer" placeholder="Type answer">
-  <button onclick="submitAnswer()">Submit</button>
-  <p id="feedback"></p>
-</div>
-
-<button onclick="showReport()">Final Report</button>
-<p id="report"></p>
+<p id="output">Click a button</p>
 
 <script src="script.js"></script>
 </body>
