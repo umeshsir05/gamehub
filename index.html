@@ -1,41 +1,753 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Car Racing Game</title>
-<link rel="stylesheet" href="style.css">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Racing Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #1a1a2e, #16213e);
+            color: white;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #f8c555;
+            text-shadow: 0 0 10px rgba(248, 197, 85, 0.7);
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: #a0a0c0;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background-color: #0d1525;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border: 2px solid #2a3b5c;
+        }
+
+        #gameCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #0f1b2f;
+            border-radius: 10px;
+            border: 1px solid #2a3b5c;
+        }
+
+        .score-box, .speed-box, .lives-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .info-title {
+            font-size: 0.9rem;
+            color: #a0a0c0;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #f8c555;
+        }
+
+        .controls {
+            margin-top: 20px;
+            width: 100%;
+            background-color: #0f1b2f;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #2a3b5c;
+        }
+
+        .controls h3 {
+            color: #a0a0c0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .keys {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .key {
+            background-color: #2a3b5c;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #f8c555;
+            box-shadow: 0 4px 0 #1a2842;
+        }
+
+        .key-description {
+            color: #a0a0c0;
+            font-size: 0.9rem;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        #startBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #pauseBtn {
+            background-color: #f8c555;
+            color: #333;
+        }
+
+        #resetBtn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(15, 27, 47, 0.95);
+            padding: 30px 50px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 10;
+            border: 2px solid #f8c555;
+            box-shadow: 0 0 30px rgba(248, 197, 85, 0.5);
+            display: none;
+        }
+
+        .message h2 {
+            color: #f8c555;
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+        }
+
+        .message p {
+            color: #a0a0c0;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .game-over {
+            color: #e74c3c !important;
+        }
+
+        .road-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .road-line {
+            position: absolute;
+            width: 10px;
+            height: 60px;
+            background-color: #f8c555;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        footer {
+            margin-top: 25px;
+            color: #a0a0c0;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>CAR RACING GAME</h1>
+        <p class="subtitle">Avoid obstacles, collect fuel, and achieve the highest score!</p>
+        
+        <div class="game-container">
+            <canvas id="gameCanvas"></canvas>
+            <div class="road-lines" id="roadLines"></div>
+            
+            <div class="message" id="messageBox">
+                <h2 id="messageTitle">Game Paused</h2>
+                <p id="messageText">Press P to resume or click the Resume button</p>
+                <button id="messageBtn">Resume Game</button>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="score-box">
+                <div class="info-title">SCORE</div>
+                <div class="info-value" id="score">0</div>
+            </div>
+            <div class="speed-box">
+                <div class="info-title">SPEED</div>
+                <div class="info-value" id="speed">0</div>
+            </div>
+            <div class="lives-box">
+                <div class="info-title">LIVES</div>
+                <div class="info-value" id="lives">3</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <h3>CONTROLS</h3>
+            <div class="keys">
+                <div class="key-container">
+                    <div class="key">←</div>
+                    <div class="key-description">Move Left</div>
+                </div>
+                <div class="key-container">
+                    <div class="key">→</div>
+                    <div class="key-description">Move Right</div>
+                </div>
+                <div class="key-container">
+                    <div class="key">P</div>
+                    <div class="key-description">Pause/Resume</div>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button id="startBtn">Start Game</button>
+                <button id="pauseBtn">Pause Game</button>
+                <button id="resetBtn">Reset Game</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Use LEFT and RIGHT arrow keys to control your car. Avoid obstacles and collect fuel!</p>
+        </footer>
+    </div>
 
-<div class="gameContainer">
+    <script>
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const speedElement = document.getElementById('speed');
+        const livesElement = document.getElementById('lives');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const messageBox = document.getElementById('messageBox');
+        const messageTitle = document.getElementById('messageTitle');
+        const messageText = document.getElementById('messageText');
+        const messageBtn = document.getElementById('messageBtn');
+        const roadLines = document.getElementById('roadLines');
 
-  <div class="scoreBox">
-    Score: <span id="score">0</span>
-  </div>
+        // Set canvas size
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
 
-  <div class="road" id="road">
-    <div class="line"></div>
-    <div class="line"></div>
-    <div class="line"></div>
+        // Game state
+        let game = {
+            running: false,
+            paused: false,
+            score: 0,
+            lives: 3,
+            speed: 0,
+            level: 1,
+            roadSpeed: 2
+        };
 
-    <div class="car" id="player"></div>
-    <div class="enemy" id="enemy"></div>
-  </div>
+        // Player car
+        const playerCar = {
+            x: canvas.width / 2 - 25,
+            y: canvas.height - 120,
+            width: 50,
+            height: 100,
+            color: '#3498db',
+            speed: 8
+        };
 
-  <div class="startScreen" id="startScreen">
-    Tap / Press Enter to Start
-  </div>
+        // Arrays for obstacles and fuel
+        let obstacles = [];
+        let fuels = [];
+        let particles = [];
 
-  <!-- Mobile Controls -->
-  <div class="controls">
-    <button id="leftBtn">◀</button>
-    <button id="rightBtn">▶</button>
-  </div>
+        // Road lines for animation
+        let roadLinesPos = [];
 
-</div>
+        // Initialize road lines
+        function initRoadLines() {
+            roadLines.innerHTML = '';
+            roadLinesPos = [];
+            
+            for (let i = 0; i < 10; i++) {
+                const line = document.createElement('div');
+                line.className = 'road-line';
+                line.style.top = `${i * 80 - 40}px`;
+                roadLines.appendChild(line);
+                roadLinesPos.push(i * 80 - 40);
+            }
+        }
 
-<script src="script.js"></script>
+        // Animate road lines
+        function animateRoadLines() {
+            if (!game.running || game.paused) return;
+            
+            roadLinesPos.forEach((pos, index) => {
+                pos += game.roadSpeed * 2;
+                if (pos > canvas.height) {
+                    pos = -60;
+                }
+                roadLinesPos[index] = pos;
+                roadLines.children[index].style.top = `${pos}px`;
+            });
+        }
+
+        // Game objects
+        class Obstacle {
+            constructor() {
+                this.width = 40 + Math.random() * 40;
+                this.height = 70 + Math.random() * 50;
+                this.x = Math.random() * (canvas.width - this.width);
+                this.y = -this.height;
+                this.color = `hsl(${Math.random() * 30 + 330}, 80%, 60%)`;
+                this.speed = 3 + Math.random() * 2 + game.level * 0.5;
+            }
+        }
+
+        class Fuel {
+            constructor() {
+                this.width = 30;
+                this.height = 50;
+                this.x = Math.random() * (canvas.width - this.width);
+                this.y = -this.height;
+                this.color = '#2ecc71';
+                this.speed = 4;
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+                this.color = color;
+                this.life = 30;
+            }
+        }
+
+        // Draw functions
+        function drawPlayerCar() {
+            ctx.fillStyle = playerCar.color;
+            ctx.fillRect(playerCar.x, playerCar.y, playerCar.width, playerCar.height);
+            
+            // Car details
+            ctx.fillStyle = '#2980b9';
+            ctx.fillRect(playerCar.x + 5, playerCar.y + 5, playerCar.width - 10, 15);
+            ctx.fillRect(playerCar.x + 5, playerCar.y + playerCar.height - 20, playerCar.width - 10, 15);
+            
+            // Windows
+            ctx.fillStyle = '#1a5276';
+            ctx.fillRect(playerCar.x + 10, playerCar.y + 25, playerCar.width - 20, 30);
+            
+            // Wheels
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(playerCar.x - 5, playerCar.y + 10, 5, 20);
+            ctx.fillRect(playerCar.x + playerCar.width, playerCar.y + 10, 5, 20);
+            ctx.fillRect(playerCar.x - 5, playerCar.y + playerCar.height - 30, 5, 20);
+            ctx.fillRect(playerCar.x + playerCar.width, playerCar.y + playerCar.height - 30, 5, 20);
+        }
+
+        function drawObstacles() {
+            obstacles.forEach(obstacle => {
+                ctx.fillStyle = obstacle.color;
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                
+                // Obstacle details
+                ctx.fillStyle = '#c0392b';
+                ctx.fillRect(obstacle.x + 5, obstacle.y + 5, obstacle.width - 10, 10);
+                ctx.fillRect(obstacle.x + 5, obstacle.y + obstacle.height - 15, obstacle.width - 10, 10);
+            });
+        }
+
+        function drawFuels() {
+            fuels.forEach(fuel => {
+                ctx.fillStyle = fuel.color;
+                ctx.fillRect(fuel.x, fuel.y, fuel.width, fuel.height);
+                
+                // Fuel details
+                ctx.fillStyle = '#27ae60';
+                ctx.fillRect(fuel.x + 5, fuel.y + 5, fuel.width - 10, fuel.height - 10);
+                
+                // Fuel symbol
+                ctx.fillStyle = '#2ecc71';
+                ctx.font = 'bold 20px Arial';
+                ctx.fillText('F', fuel.x + 10, fuel.y + 32);
+            });
+        }
+
+        function drawParticles() {
+            particles.forEach((particle, index) => {
+                ctx.fillStyle = particle.color;
+                ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
+                
+                // Update particle
+                particle.x += particle.speedX;
+                particle.y += particle.speedY;
+                particle.life--;
+                
+                // Remove dead particles
+                if (particle.life <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+        }
+
+        function drawRoad() {
+            // Road surface
+            ctx.fillStyle = '#34495e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Road markings
+            ctx.fillStyle = '#f8c555';
+            for (let i = 0; i < canvas.height; i += 80) {
+                ctx.fillRect(canvas.width / 2 - 5, i, 10, 40);
+            }
+            
+            // Road borders
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(0, 0, 20, canvas.height);
+            ctx.fillRect(canvas.width - 20, 0, 20, canvas.height);
+        }
+
+        // Update game objects
+        function updateObstacles() {
+            // Add new obstacles
+            if (Math.random() < 0.02 + game.level * 0.005) {
+                obstacles.push(new Obstacle());
+            }
+            
+            // Update obstacles
+            obstacles.forEach((obstacle, index) => {
+                obstacle.y += obstacle.speed;
+                
+                // Remove obstacles that are off screen
+                if (obstacle.y > canvas.height) {
+                    obstacles.splice(index, 1);
+                    game.score += 10;
+                }
+                
+                // Check collision with player
+                if (
+                    playerCar.x < obstacle.x + obstacle.width &&
+                    playerCar.x + playerCar.width > obstacle.x &&
+                    playerCar.y < obstacle.y + obstacle.height &&
+                    playerCar.y + playerCar.height > obstacle.y
+                ) {
+                    // Collision detected
+                    obstacles.splice(index, 1);
+                    game.lives--;
+                    
+                    // Create explosion particles
+                    for (let i = 0; i < 15; i++) {
+                        particles.push(new Particle(
+                            obstacle.x + obstacle.width / 2,
+                            obstacle.y + obstacle.height / 2,
+                            obstacle.color
+                        ));
+                    }
+                    
+                    updateUI();
+                    
+                    if (game.lives <= 0) {
+                        gameOver();
+                    }
+                }
+            });
+        }
+
+        function updateFuels() {
+            // Add new fuel
+            if (Math.random() < 0.01) {
+                fuels.push(new Fuel());
+            }
+            
+            // Update fuels
+            fuels.forEach((fuel, index) => {
+                fuel.y += fuel.speed;
+                
+                // Remove fuels that are off screen
+                if (fuel.y > canvas.height) {
+                    fuels.splice(index, 1);
+                }
+                
+                // Check collision with player
+                if (
+                    playerCar.x < fuel.x + fuel.width &&
+                    playerCar.x + playerCar.width > fuel.x &&
+                    playerCar.y < fuel.y + fuel.height &&
+                    playerCar.y + playerCar.height > fuel.y
+                ) {
+                    // Fuel collected
+                    fuels.splice(index, 1);
+                    game.score += 50;
+                    game.speed += 0.5;
+                    
+                    // Create collection particles
+                    for (let i = 0; i < 10; i++) {
+                        particles.push(new Particle(
+                            fuel.x + fuel.width / 2,
+                            fuel.y + fuel.height / 2,
+                            fuel.color
+                        ));
+                    }
+                    
+                    updateUI();
+                }
+            });
+        }
+
+        // Update UI
+        function updateUI() {
+            scoreElement.textContent = game.score;
+            speedElement.textContent = game.speed.toFixed(1);
+            livesElement.textContent = game.lives;
+            
+            // Increase level based on score
+            game.level = Math.floor(game.score / 500) + 1;
+        }
+
+        // Game loop
+        function gameLoop() {
+            if (!game.running || game.paused) return;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw game elements
+            drawRoad();
+            drawObstacles();
+            drawFuels();
+            drawParticles();
+            drawPlayerCar();
+            
+            // Update game elements
+            updateObstacles();
+            updateFuels();
+            
+            // Increase speed over time
+            game.speed += 0.005;
+            game.roadSpeed = 2 + game.speed * 0.5;
+            
+            // Update UI
+            updateUI();
+            
+            // Animate road lines
+            animateRoadLines();
+            
+            // Continue game loop
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Game controls
+        function startGame() {
+            if (game.running) return;
+            
+            game.running = true;
+            game.paused = false;
+            game.score = 0;
+            game.lives = 3;
+            game.speed = 0;
+            game.level = 1;
+            game.roadSpeed = 2;
+            
+            obstacles = [];
+            fuels = [];
+            particles = [];
+            
+            playerCar.x = canvas.width / 2 - 25;
+            
+            updateUI();
+            hideMessage();
+            gameLoop();
+            initRoadLines();
+        }
+
+        function pauseGame() {
+            if (!game.running) return;
+            
+            game.paused = !game.paused;
+            
+            if (game.paused) {
+                showMessage("Game Paused", "Press P to resume or click the Resume button", "Resume Game");
+            } else {
+                hideMessage();
+                gameLoop();
+            }
+        }
+
+        function resetGame() {
+            game.running = false;
+            game.paused = false;
+            
+            obstacles = [];
+            fuels = [];
+            particles = [];
+            
+            playerCar.x = canvas.width / 2 - 25;
+            
+            game.score = 0;
+            game.lives = 3;
+            game.speed = 0;
+            game.level = 1;
+            
+            updateUI();
+            hideMessage();
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawRoad();
+            drawPlayerCar();
+            initRoadLines();
+        }
+
+        function gameOver() {
+            game.running = false;
+            showMessage("Game Over", `Your final score: ${game.score}`, "Play Again");
+        }
+
+        // Message functions
+        function showMessage(title, text, buttonText) {
+            messageTitle.textContent = title;
+            messageText.textContent = text;
+            messageBtn.textContent = buttonText;
+            
+            if (title === "Game Over") {
+                messageTitle.classList.add("game-over");
+            } else {
+                messageTitle.classList.remove("game-over");
+            }
+            
+            messageBox.style.display = "block";
+        }
+
+        function hideMessage() {
+            messageBox.style.display = "none";
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (!game.running || game.paused) return;
+            
+            if (e.key === 'ArrowLeft' && playerCar.x > 30) {
+                playerCar.x -= playerCar.speed;
+            }
+            
+            if (e.key === 'ArrowRight' && playerCar.x < canvas.width - playerCar.width - 30) {
+                playerCar.x += playerCar.speed;
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'p' || e.key === 'P') {
+                pauseGame();
+            }
+            
+            if (e.key === ' ' && !game.running) {
+                startGame();
+            }
+        });
+
+        startBtn.addEventListener('click', startGame);
+        pauseBtn.addEventListener('click', pauseGame);
+        resetBtn.addEventListener('click', resetGame);
+        messageBtn.addEventListener('click', () => {
+            if (messageTitle.textContent === "Game Over") {
+                startGame();
+            } else {
+                pauseGame();
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            playerCar.x = Math.min(playerCar.x, canvas.width - playerCar.width - 30);
+            initRoadLines();
+        });
+
+        // Initialize the game
+        function init() {
+            drawRoad();
+            drawPlayerCar();
+            initRoadLines();
+        }
+
+        // Start initialization
+        init();
+    </script>
 </body>
 </html>
