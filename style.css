@@ -1,76 +1,83 @@
-body{
+*{
   margin:0;
-  font-family:Arial;
-  background:#0f172a;
-  color:#fff;
-}
-
-header{
-  background:#020617;
-  padding:15px;
-  text-align:center;
-  font-size:22px;
-}
-
-.dashboard{
-  padding:10px;
-  background:#1e293b;
-  text-align:center;
-}
-
-.menu{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  padding:15px;
-  justify-content:center;
-}
-
-.menu button{
-  padding:10px;
-  background:#334155;
-  border:none;
-  color:#fff;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-.menu button:hover{
-  background:#22c55e;
-  color:#000;
-}
-
-.gameBox{
-  background:#020617;
-  margin:15px;
-  padding:20px;
-  border-radius:10px;
-  text-align:center;
-}
-
-input{
-  padding:8px;
-  margin:10px;
-}
-
-button{
-  padding:8px 15px;
-  border:none;
-  border-radius:5px;
-  background:#22c55e;
-  font-weight:bold;
-  cursor:pointer;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, sans-serif;
 }
 
 body{
-  font-family:Arial;
-  background:#111;
-  color:#fff;
-  padding:20px;
+  background:#222;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
-button{
-  padding:10px;
-  margin:5px;
+.game{
+  position:relative;
+  width:300px;
+  height:500px;
+  background:#555;
+  overflow:hidden;
+}
+
+.score{
+  position:absolute;
+  top:10px;
+  left:10px;
+  color:#fff;
+  font-size:18px;
+  z-index:10;
+}
+
+.road{
+  width:100%;
+  height:100%;
+  position:relative;
+}
+
+.line{
+  position:absolute;
+  width:10px;
+  height:100px;
+  background:#fff;
+  left:145px;
+  animation:moveLine 1s linear infinite;
+}
+
+.line:nth-child(2){ top:150px; }
+.line:nth-child(3){ top:300px; }
+
+@keyframes moveLine{
+  0%{ top:-100px; }
+  100%{ top:500px; }
+}
+
+.car{
+  position:absolute;
+  width:40px;
+  height:70px;
+  background:red;
+  bottom:20px;
+  left:130px;
+  border-radius:5px;
+}
+
+.enemy{
+  position:absolute;
+  width:40px;
+  height:70px;
+  background:yellow;
+  top:-100px;
+  left:60px;
+  border-radius:5px;
+}
+
+.startScreen{
+  position:absolute;
+  color:white;
+  font-size:20px;
+  background:rgba(0,0,0,0.8);
+  padding:20px;
   cursor:pointer;
 }
