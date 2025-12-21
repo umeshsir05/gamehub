@@ -6,31 +6,50 @@ const startScreen = document.getElementById("startScreen");
 const leftBtn = document.getElementById("leftBtn");
 const rightBtn = document.getElementById("rightBtn");
 
-let keys = {};
+let moveLeft = false;
+let moveRight = false;
 let score = 0;
 let speed = 5;
 let gameRunning = false;
 
 /* Keyboard */
 document.addEventListener("keydown", e => {
-  keys[e.key] = true;
-  if(e.key === "Enter" && !gameRunning){
-    startGame();
-  }
+  if(e.key === "ArrowLeft") moveLeft = true;
+  if(e.key === "ArrowRight") moveRight = true;
+  if(e.key === "Enter" && !gameRunning) startGame();
 });
 
 document.addEventListener("keyup", e => {
-  keys[e.key] = false;
+  if(e.key === "ArrowLeft") moveLeft = false;
+  if(e.key === "ArrowRight") moveRight = false;
 });
 
-/* Mobile Touch */
-leftBtn.addEventListener("touchstart", () => keys["ArrowLeft"] = true);
-leftBtn.addEventListener("touchend", () => keys["ArrowLeft"] = false);
+/* 🔥 Mobile Touch Fix */
+leftBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  moveLeft = true;
+});
 
-rightBtn.addEventListener("touchstart", () => keys["ArrowRight"] = true);
-rightBtn.addEventListener("touchend", () => keys["ArrowRight"] = false);
+leftBtn.addEventListener("touchend", e => {
+  e.preventDefault();
+  moveLeft = false;
+});
 
-/* Tap to start */
+rightBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  moveRight = true;
+});
+
+rightBtn.addEventListener("touchend", e => {
+  e.preventDefault();
+  moveRight = false;
+});
+
+/* Tap to Start */
+startScreen.addEventListener("touchstart", () => {
+  if(!gameRunning) startGame();
+});
+
 startScreen.addEventListener("click", () => {
   if(!gameRunning) startGame();
 });
@@ -51,17 +70,15 @@ function gamePlay(){
   score++;
   scoreEl.innerText = score;
 
-  if(score % 200 === 0){
-    speed++;
-  }
+  if(score % 200 === 0) speed++;
 
   let playerX = player.offsetLeft;
 
-  if(keys["ArrowLeft"] && playerX > 0){
+  if(moveLeft && playerX > 0){
     player.style.left = playerX - 6 + "px";
   }
 
-  if(keys["ArrowRight"] && playerX < 260){
+  if(moveRight && playerX < 260){
     player.style.left = playerX + 6 + "px";
   }
 
@@ -70,11 +87,11 @@ function gamePlay(){
   if(enemyY > 520){
     enemy.style.top = "-100px";
     enemy.style.left = Math.floor(Math.random() * 240) + "px";
-  }else{
+  } else {
     enemy.style.top = enemyY + speed + "px";
   }
 
-  if(checkCollision(player, enemy)){
+  if(isCollide(player, enemy)){
     endGame();
     return;
   }
@@ -82,7 +99,7 @@ function gamePlay(){
   requestAnimationFrame(gamePlay);
 }
 
-function checkCollision(a, b){
+function isCollide(a, b){
   let aRect = a.getBoundingClientRect();
   let bRect = b.getBoundingClientRect();
 
