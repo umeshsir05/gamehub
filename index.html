@@ -1,19 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Game Hub Test</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Car Racing Game</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>🎮 Game Hub</h2>
+<div class="game">
+  <div class="score">Score: <span id="score">0</span></div>
 
-<button onclick="test()">Test Button</button>
-<button onclick="loadGame('math')">Math Game</button>
-<button onclick="loadGame('word')">Word Game</button>
+  <div class="road">
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="line"></div>
 
-<p id="output">Click a button</p>
+    <div class="car" id="player"></div>
+    <div class="enemy"></div>
+  </div>
+</div>
+
+<div class="startScreen" id="start">
+  Press ENTER to Start
+</div>
 
 <script src="script.js"></script>
 </body>
