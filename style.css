@@ -113,3 +113,8 @@ body{
     display:none;
   }
 }
+.controls button{
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
