@@ -1,27 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Car Racing Game</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Racing Game</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="game">
-  <div class="score">Score: <span id="score">0</span></div>
+<div class="gameContainer">
 
-  <div class="road">
+  <div class="scoreBox">
+    Score: <span id="score">0</span>
+  </div>
+
+  <div class="road" id="road">
     <div class="line"></div>
     <div class="line"></div>
     <div class="line"></div>
 
     <div class="car" id="player"></div>
-    <div class="enemy"></div>
+    <div class="enemy" id="enemy"></div>
   </div>
-</div>
 
-<div class="startScreen" id="start">
-  Press ENTER to Start
+  <div class="startScreen" id="startScreen">
+    Tap / Press Enter to Start
+  </div>
+
+  <!-- Mobile Controls -->
+  <div class="controls">
+    <button id="leftBtn">◀</button>
+    <button id="rightBtn">▶</button>
+  </div>
+
 </div>
 
 <script src="script.js"></script>
