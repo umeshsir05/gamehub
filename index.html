@@ -2,101 +2,247 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Car Racing Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle Game Hub</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
+        <!-- Header Section -->
         <header>
-            <h1><i class="fas fa-flag-checkered"></i> CAR RACER</h1>
-            <p class="subtitle">Avoid obstacles, collect fuel, and race to the top!</p>
+            <div class="logo">
+                <i class="fas fa-puzzle-piece"></i>
+                <h1>Puzzle<span>Game</span>Hub</h1>
+            </div>
+            <p class="tagline">Challenge your mind with classic puzzles</p>
         </header>
 
-        <div class="game-container">
-            <div class="game-header">
-                <div class="stats">
-                    <div class="stat">
-                        <span class="stat-label">SCORE</span>
-                        <span class="stat-value" id="score">0</span>
+        <!-- Main Content -->
+        <main>
+            <!-- Game Selection -->
+            <div class="game-selection">
+                <h2>Choose Your Game</h2>
+                <div class="game-cards">
+                    <div class="game-card" data-game="sudoku">
+                        <div class="game-icon">
+                            <i class="fas fa-th"></i>
+                        </div>
+                        <h3>Sudoku</h3>
+                        <p>Fill the grid so every row, column and 3×3 box contains 1-9</p>
+                        <button class="play-btn">Play Now</button>
                     </div>
-                    <div class="stat">
-                        <span class="stat-label">SPEED</span>
-                        <span class="stat-value" id="speed">0</span>
+                    <div class="game-card" data-game="memory">
+                        <div class="game-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>Memory Match</h3>
+                        <p>Flip cards to find matching pairs. Test your memory!</p>
+                        <button class="play-btn">Play Now</button>
                     </div>
-                    <div class="stat">
-                        <span class="stat-label">LIVES</span>
-                        <span class="stat-value" id="lives">3</span>
+                    <div class="game-card" data-game="tictactoe">
+                        <div class="game-icon">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <h3>Tic-Tac-Toe</h3>
+                        <p>Classic X and O game. Play against the computer or a friend</p>
+                        <button class="play-btn">Play Now</button>
                     </div>
                 </div>
             </div>
 
+            <!-- Game Area -->
             <div class="game-area">
-                <canvas id="gameCanvas"></canvas>
-                <div class="message-box" id="messageBox">
-                    <h2 id="messageTitle">Ready to Race?</h2>
-                    <p id="messageText">Tap START to begin your racing adventure!</p>
-                    <button id="messageBtn" class="btn">START GAME</button>
-                </div>
-            </div>
-
-            <!-- Mobile Touch Controls -->
-            <div class="mobile-controls">
-                <div class="control-row">
-                    <button class="control-btn left-btn" id="leftBtn">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <div class="control-center">
-                        <button class="control-btn action-btn" id="pauseBtn">
-                            <i class="fas fa-pause"></i>
+                <div class="game-header">
+                    <h2 id="game-title">Select a Game</h2>
+                    <div class="game-controls">
+                        <button id="back-btn" class="control-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Games
                         </button>
-                    </div>
-                    <button class="control-btn right-btn" id="rightBtn">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="controls">
-            <div class="buttons">
-                <button id="startBtn" class="btn start-btn">
-                    <i class="fas fa-play"></i> START
-                </button>
-                <button id="resetBtn" class="btn reset-btn">
-                    <i class="fas fa-redo"></i> RESET
-                </button>
-            </div>
-
-            <div class="instructions">
-                <h3><i class="fas fa-info-circle"></i> HOW TO PLAY</h3>
-                <div class="instruction-grid">
-                    <div class="instruction">
-                        <div class="key"><i class="fas fa-arrow-left"></i></div>
-                        <p>Move Left</p>
-                    </div>
-                    <div class="instruction">
-                        <div class="key"><i class="fas fa-arrow-right"></i></div>
-                        <p>Move Right</p>
-                    </div>
-                    <div class="instruction">
-                        <div class="key">P</div>
-                        <p>Pause Game</p>
-                    </div>
-                    <div class="instruction">
-                        <div class="key"><i class="fas fa-gas-pump"></i></div>
-                        <p>Collect Fuel</p>
+                        <button id="restart-btn" class="control-btn">
+                            <i class="fas fa-redo"></i> Restart
+                        </button>
+                        <div id="game-stats">
+                            <span id="timer">Time: 00:00</span>
+                            <span id="moves">Moves: 0</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
+                <div class="game-container">
+                    <!-- Sudoku Game -->
+                    <div id="sudoku-game" class="game">
+                        <div class="sudoku-header">
+                            <div class="difficulty-selector">
+                                <button class="diff-btn active" data-diff="easy">Easy</button>
+                                <button class="diff-btn" data-diff="medium">Medium</button>
+                                <button class="diff-btn" data-diff="hard">Hard</button>
+                            </div>
+                            <div class="sudoku-controls">
+                                <button id="check-sudoku" class="game-action-btn">Check Solution</button>
+                                <button id="solve-sudoku" class="game-action-btn">Solve Puzzle</button>
+                            </div>
+                        </div>
+                        <div class="sudoku-board" id="sudoku-board">
+                            <!-- Sudoku grid will be generated by JavaScript -->
+                        </div>
+                        <div class="number-selector">
+                            <button class="num-btn" data-value="1">1</button>
+                            <button class="num-btn" data-value="2">2</button>
+                            <button class="num-btn" data-value="3">3</button>
+                            <button class="num-btn" data-value="4">4</button>
+                            <button class="num-btn" data-value="5">5</button>
+                            <button class="num-btn" data-value="6">6</button>
+                            <button class="num-btn" data-value="7">7</button>
+                            <button class="num-btn" data-value="8">8</button>
+                            <button class="num-btn" data-value="9">9</button>
+                            <button class="num-btn clear" data-value="0">
+                                <i class="fas fa-eraser"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Memory Game -->
+                    <div id="memory-game" class="game">
+                        <div class="memory-header">
+                            <div class="size-selector">
+                                <button class="size-btn active" data-size="4">4x4</button>
+                                <button class="size-btn" data-size="6">6x6</button>
+                            </div>
+                            <div class="memory-stats">
+                                <div class="stat">
+                                    <span class="stat-label">Matches:</span>
+                                    <span id="matches">0/8</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="memory-board" id="memory-board">
+                            <!-- Memory cards will be generated by JavaScript -->
+                        </div>
+                        <div class="memory-instructions">
+                            <p>Flip two cards at a time to find matching pairs. Try to complete the board with the fewest moves!</p>
+                        </div>
+                    </div>
+
+                    <!-- Tic Tac Toe Game -->
+                    <div id="tictactoe-game" class="game">
+                        <div class="tictactoe-header">
+                            <div class="mode-selector">
+                                <button class="mode-btn active" data-mode="player">Player vs Player</button>
+                                <button class="mode-btn" data-mode="computer">Player vs Computer</button>
+                            </div>
+                            <div class="player-info">
+                                <div class="current-player">
+                                    <span>Current Player:</span>
+                                    <div class="player-symbol" id="current-player">X</div>
+                                </div>
+                                <div class="score">
+                                    <div class="score-item">
+                                        <span>X Wins:</span>
+                                        <span id="x-wins">0</span>
+                                    </div>
+                                    <div class="score-item">
+                                        <span>O Wins:</span>
+                                        <span id="o-wins">0</span>
+                                    </div>
+                                    <div class="score-item">
+                                        <span>Draws:</span>
+                                        <span id="draws">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tictactoe-board" id="tictactoe-board">
+                            <!-- Tic Tac Toe board will be generated by JavaScript -->
+                        </div>
+                        <div class="tictactoe-controls">
+                            <button id="reset-score" class="game-action-btn">Reset Score</button>
+                        </div>
+                    </div>
+
+                    <!-- Default State -->
+                    <div id="default-state" class="game default-state">
+                        <div class="default-content">
+                            <i class="fas fa-gamepad"></i>
+                            <h3>Select a Game to Play</h3>
+                            <p>Click on any of the game cards above to start playing!</p>
+                            <div class="feature-list">
+                                <div class="feature">
+                                    <i class="fas fa-brain"></i>
+                                    <span>Brain Training</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Track Progress</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fas fa-trophy"></i>
+                                    <span>Achievements</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player Stats -->
+            <div class="player-stats">
+                <h2>Your Stats</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Play Time</h3>
+                            <p id="total-time">00:00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Games Completed</h3>
+                            <p id="games-completed">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Current Streak</h3>
+                            <p id="current-streak">0 days</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
         <footer>
-            <p>Built with <i class="fas fa-heart"></i> for racing enthusiasts | Use arrow keys or buttons to control</p>
+            <p>Puzzle Game Hub &copy; <span id="current-year">2023</span> | Challenge Your Mind</p>
+            <div class="footer-links">
+                <a href="#"><i class="fab fa-github"></i> GitHub</a>
+                <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+            </div>
         </footer>
     </div>
 
-    <script src="game.js"></script>
+    <!-- Game Instructions Modal -->
+    <div id="instructions-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title">Game Instructions</h2>
+            <div id="modal-body">
+                <p>Select a game to see its instructions.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
