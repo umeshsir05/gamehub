@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initTicTacToe();
     setupEventListeners();
     
-    // Set default state
-    showDefaultState();
+    // Show home page by default
+    showHomePage();
     
     // Initialize player stats
     updatePlayerStats();
@@ -26,16 +26,39 @@ let currentStreak = 0;
 
 // Event Listeners Setup
 function setupEventListeners() {
-    // Game card selection
-    document.querySelectorAll('.game-card').forEach(card => {
-        card.addEventListener('click', function() {
+    // Desktop navigation items
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function() {
             const game = this.getAttribute('data-game');
-            selectGame(game);
+            selectGameFromNav(game);
         });
     });
     
-    // Back to games button
-    document.getElementById('back-btn').addEventListener('click', showDefaultState);
+    // Mobile navigation items
+    document.querySelectorAll('.mobile-game-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const game = this.getAttribute('data-game');
+            selectGameFromNav(game);
+            closeMobileNav();
+        });
+    });
+    
+    // Game card selection (home page)
+    document.querySelectorAll('.game-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const game = this.getAttribute('data-game');
+            selectGameFromNav(game);
+        });
+    });
+    
+    // Mobile menu button
+    document.getElementById('mobile-menu-btn').addEventListener('click', openMobileNav);
+    
+    // Close mobile nav button
+    document.getElementById('close-nav').addEventListener('click', closeMobileNav);
+    
+    // Back to home button
+    document.getElementById('back-btn').addEventListener('click', showHomePage);
     
     // Restart game button
     document.getElementById('restart-btn').addEventListener('click', restartCurrentGame);
@@ -86,9 +109,62 @@ function setupEventListeners() {
     });
 }
 
+// Navigation Functions
+function selectGameFromNav(game) {
+    if (game === 'all' || game === 'home') {
+        showHomePage();
+    } else {
+        selectGame(game);
+    }
+    
+    // Update active state in desktop navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('data-game') === game) {
+            item.classList.add('active');
+        }
+    });
+}
+
+function openMobileNav() {
+    document.getElementById('mobile-nav').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeMobileNav() {
+    document.getElementById('mobile-nav').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+// Show home page with game selection cards
+function showHomePage() {
+    currentGame = null;
+    
+    // Show game selection, hide game area
+    document.getElementById('game-selection').classList.add('active');
+    document.getElementById('game-area').classList.remove('active');
+    
+    // Reset timer and moves
+    clearInterval(gameTimer);
+    document.getElementById('timer').textContent = 'Time: 00:00';
+    document.getElementById('moves').textContent = 'Moves: 0';
+    
+    // Update navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('data-game') === 'all') {
+            item.classList.add('active');
+        }
+    });
+}
+
 // Game Selection
 function selectGame(game) {
     currentGame = game;
+    
+    // Hide game selection, show game area
+    document.getElementById('game-selection').classList.remove('active');
+    document.getElementById('game-area').classList.add('active');
     
     // Hide all games and show selected one
     document.querySelectorAll('.game').forEach(g => {
@@ -124,36 +200,6 @@ function selectGame(game) {
     
     // Start game timer
     startGameTimer();
-    
-    // Show game controls
-    document.getElementById('back-btn').style.display = 'flex';
-    document.getElementById('restart-btn').style.display = 'flex';
-    document.getElementById('game-stats').style.display = 'flex';
-}
-
-// Show default state (no game selected)
-function showDefaultState() {
-    currentGame = null;
-    
-    // Hide all games and show default
-    document.querySelectorAll('.game').forEach(g => {
-        g.classList.remove('active');
-    });
-    
-    document.getElementById('default-state').classList.add('active');
-    
-    // Update game title
-    document.getElementById('game-title').textContent = 'Select a Game';
-    
-    // Hide game controls
-    document.getElementById('back-btn').style.display = 'none';
-    document.getElementById('restart-btn').style.display = 'none';
-    document.getElementById('game-stats').style.display = 'none';
-    
-    // Reset timer and moves
-    clearInterval(gameTimer);
-    document.getElementById('timer').textContent = 'Time: 00:00';
-    document.getElementById('moves').textContent = 'Moves: 0';
 }
 
 // Restart current game
@@ -209,8 +255,13 @@ function updatePlayerStats() {
     document.getElementById('total-time').textContent = 
         `${totalHours.toString().padStart(2, '0')}:${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
     
+    // Update mobile stats
+    document.getElementById('mobile-total-time').textContent = 
+        `${totalHours.toString().padStart(2, '0')}:${totalMinutes.toString().padStart(2, '0')}`;
+    
     // Update games completed
     document.getElementById('games-completed').textContent = gamesCompleted;
+    document.getElementById('mobile-games-completed').textContent = gamesCompleted;
     
     // Update current streak (simulated)
     document.getElementById('current-streak').textContent = `${currentStreak} days`;
@@ -255,8 +306,6 @@ function startSudoku(difficulty) {
 
 function generateSudokuPuzzle(difficulty) {
     // For simplicity, we'll use a pre-defined puzzle
-    // In a real implementation, you would generate puzzles algorithmically
-    
     const puzzles = {
         easy: [
             [5, 3, 0, 0, 7, 0, 0, 0, 0],
@@ -418,8 +467,6 @@ function checkSudokuSolution() {
 
 function solveSudoku() {
     // For simplicity, we'll just fill in the solution to the easy puzzle
-    // In a real implementation, you would use a backtracking algorithm
-    
     const solution = [
         [5, 3, 4, 6, 7, 8, 9, 1, 2],
         [6, 7, 2, 1, 9, 5, 3, 4, 8],
@@ -810,3 +857,11 @@ function saveScores() {
     };
     localStorage.setItem('ticTacToeScores', JSON.stringify(scores));
 }
+
+// Handle window resize for responsiveness
+window.addEventListener('resize', function() {
+    // Close mobile nav on resize to larger screens
+    if (window.innerWidth > 768) {
+        closeMobileNav();
+    }
+});
