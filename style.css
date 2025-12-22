@@ -894,4 +894,415 @@ body {
     font-size: 0.9rem;
     font-weight: bold;
     color: white;
-    border-radius: 
+    border-radius:
+    .sudoku-board {
+        max-width: 400px;
+    }
+    
+    .memory-board {
+        max-width: 450px;
+    }
+    
+    .memory-board.size-6 {
+        max-width: 500px;
+    }
+    
+    .tictactoe-board {
+        max-width: 350px;
+    }
+}
+
+@media (max-width: 768px) {
+    .desktop-nav {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+    
+    .logo i {
+        font-size: 1.8rem;
+    }
+    
+    .game-selection h2 {
+        font-size: 1.8rem;
+    }
+    
+    .game-cards {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    
+    .game-card {
+        padding: 15px;
+    }
+    
+    .game-card h3 {
+        font-size: 1.3rem;
+    }
+    
+    .game-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .game-title-section {
+        justify-content: space-between;
+    }
+    
+    .game-controls {
+        justify-content: space-between;
+    }
+    
+    .hangman-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .hangman-word {
+        min-width: 100%;
+    }
+    
+    .wordsearch-container {
+        flex-direction: column;
+    }
+    
+    .wordsearch-grid {
+        min-width: 100%;
+        grid-template-columns: repeat(10, 1fr);
+    }
+    
+    .slidingpuzzle-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .slidingpuzzle-board {
+        min-width: 100%;
+    }
+    
+    .puzzle-image {
+        width: 100%;
+    }
+    
+    .options {
+        grid-template-columns: 1fr;
+    }
+    
+    .snake-controls-mobile {
+        display: flex;
+    }
+    
+    .connect4-board {
+        grid-template-columns: repeat(7, 40px);
+    }
+    
+    .connect4-cell {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .connect4-controls {
+        gap: 3px;
+    }
+    
+    .drop-btn {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .sudoku-board {
+        max-width: 350px;
+    }
+    
+    .sudoku-cell {
+        font-size: 1rem;
+    }
+    
+    .memory-board {
+        max-width: 350px;
+        gap: 6px;
+    }
+    
+    .memory-board.size-6 {
+        max-width: 400px;
+        gap: 5px;
+    }
+    
+    .memory-card {
+        font-size: 1.5rem;
+    }
+    
+    .tictactoe-board {
+        max-width: 300px;
+    }
+    
+    .tictactoe-cell {
+        font-size: 2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .num-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .feature-list {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .word-letter {
+        font-size: 2rem;
+        width: 40px;
+        height: 50px;
+    }
+    
+    .key {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+    
+    .ws-cell {
+        font-size: 0.9rem;
+    }
+    
+    .ms-cell {
+        width: 25px;
+        height: 25px;
+        font-size: 0.8rem;
+    }
+    
+    .puzzle-tile {
+        font-size: 1.2rem;
+    }
+    
+    .snake-cell {
+        width: 15px;
+        height: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .logo h1 {
+        font-size: 1.3rem;
+    }
+    
+    .tagline {
+        font-size: 0.9rem;
+    }
+    
+    .game-selection h2 {
+        font-size: 1.5rem;
+    }
+    
+    .game-cards {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .game-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .control-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    #game-stats {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        gap: 10px;
+    }
+    
+    .sudoku-board {
+        max-width: 300px;
+    }
+    
+    .memory-board {
+        max-width: 300px;
+    }
+    
+    .memory-board.size-6 {
+        max-width: 320px;
+        grid-template-columns: repeat(6, 1fr);
+    }
+    
+    .memory-card {
+        font-size: 1.2rem;
+    }
+    
+    .tictactoe-board {
+        max-width: 250px;
+    }
+    
+    .tictactoe-cell {
+        font-size: 1.8rem;
+    }
+    
+    .score {
+        justify-content: center;
+    }
+    
+    .score-item {
+        min-width: 60px;
+        padding: 6px 8px;
+    }
+    
+    .number-selector {
+        gap: 5px;
+    }
+    
+    .num-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .default-content i {
+        font-size: 3rem;
+    }
+    
+    .default-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .footer-links {
+        gap: 15px;
+    }
+    
+    .footer-links a {
+        font-size: 0.8rem;
+    }
+    
+    .hangman-figure {
+        width: 150px;
+        height: 200px;
+    }
+    
+    .word-letter {
+        font-size: 1.5rem;
+        width: 30px;
+        height: 40px;
+    }
+    
+    .key {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .wordsearch-grid {
+        grid-template-columns: repeat(8, 1fr);
+    }
+    
+    .ws-cell {
+        font-size: 0.8rem;
+    }
+    
+    .ms-cell {
+        width: 20px;
+        height: 20px;
+        font-size: 0.7rem;
+    }
+    
+    .puzzle-tile {
+        font-size: 1rem;
+    }
+    
+    .option-btn {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+    
+    .snake-cell {
+        width: 12px;
+        height: 12px;
+    }
+    
+    .dir-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    .connect4-board {
+        grid-template-columns: repeat(7, 30px);
+    }
+    
+    .connect4-cell {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .drop-btn {
+        padding: 6px 8px;
+        font-size: 0.7rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 360px) {
+    .sudoku-board {
+        max-width: 280px;
+    }
+    
+    .memory-board {
+        max-width: 280px;
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .memory-board.size-6 {
+        max-width: 280px;
+        grid-template-columns: repeat(6, 1fr);
+    }
+    
+    .tictactoe-board {
+        max-width: 220px;
+    }
+    
+    .num-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+    
+    .wordsearch-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    
+    .connect4-board {
+        grid-template-columns: repeat(7, 25px);
+    }
+    
+    .connect4-cell {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .drop-btn {
+        padding: 5px 6px;
+        font-size: 0.6rem;
+    }
+}
