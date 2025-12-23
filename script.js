@@ -2038,7 +2038,6 @@ window.addEventListener('resize', function() {
         drawSnake();
     }
 });
-
 // Keyboard shortcuts for games
 document.addEventListener('keydown', function(e) {
     // Space to restart current game
