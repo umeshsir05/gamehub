@@ -3,698 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puzzle Game Hub</title>
+    <title>Puzzle Game Collection</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Mobile Navigation Overlay -->
-    <div id="mobile-nav" class="mobile-nav-overlay">
-        <div class="mobile-nav-content">
-            <div class="mobile-nav-header">
-                <h3>Puzzle Games</h3>
-                <button id="close-nav" class="close-nav-btn">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="mobile-nav-games">
-                <div class="mobile-game-item" data-game="sudoku">
-                    <i class="fas fa-th"></i>
-                    <span>Sudoku</span>
-                </div>
-                <div class="mobile-game-item" data-game="memory">
-                    <i class="fas fa-brain"></i>
-                    <span>Memory Match</span>
-                </div>
-                <div class="mobile-game-item" data-game="tictactoe">
-                    <i class="fas fa-times"></i>
-                    <span>Tic Tac Toe</span>
-                </div>
-                <div class="mobile-game-item" data-game="hangman">
-                    <i class="fas fa-user"></i>
-                    <span>Hangman</span>
-                </div>
-                <div class="mobile-game-item" data-game="wordsearch">
-                    <i class="fas fa-search"></i>
-                    <span>Word Search</span>
-                </div>
-                <div class="mobile-game-item" data-game="minesweeper">
-                    <i class="fas fa-bomb"></i>
-                    <span>Minesweeper</span>
-                </div>
-                <div class="mobile-game-item" data-game="slidingpuzzle">
-                    <i class="fas fa-puzzle-piece"></i>
-                    <span>Sliding Puzzle</span>
-                </div>
-                <div class="mobile-game-item" data-game="quiz">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Trivia Quiz</span>
-                </div>
-                <div class="mobile-game-item" data-game="snake">
-                    <i class="fas fa-snake"></i>
-                    <span>Snake Game</span>
-                </div>
-                <div class="mobile-game-item" data-game="connect4">
-                    <i class="fas fa-circle"></i>
-                    <span>Connect Four</span>
-                </div>
-            </div>
-            <div class="mobile-nav-stats">
-                <h4>Quick Stats</h4>
-                <div class="mobile-stat">
-                    <i class="fas fa-clock"></i>
-                    <span>Play Time: <span id="mobile-total-time">00:00</span></span>
-                </div>
-                <div class="mobile-stat">
-                    <i class="fas fa-star"></i>
-                    <span>Games Completed: <span id="mobile-games-completed">0</span></span>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="container">
-        <!-- Header with Navigation -->
         <header>
-            <div class="header-container">
-                <div class="logo">
-                    <i class="fas fa-puzzle-piece"></i>
-                    <h1>Puzzle<span>Game</span>Hub</h1>
-                </div>
-                
-                <!-- Desktop Navigation -->
-                <nav class="desktop-nav">
-                    <ul class="nav-list">
-                        <li class="nav-item active" data-game="all">
-                            <i class="fas fa-home"></i>
-                            <span>Home</span>
-                        </li>
-                        <li class="nav-item" data-game="sudoku">
-                            <i class="fas fa-th"></i>
-                            <span>Sudoku</span>
-                        </li>
-                        <li class="nav-item" data-game="memory">
-                            <i class="fas fa-brain"></i>
-                            <span>Memory</span>
-                        </li>
-                        <li class="nav-item" data-game="tictactoe">
-                            <i class="fas fa-times"></i>
-                            <span>Tic Tac Toe</span>
-                        </li>
-                        <li class="nav-item" data-game="hangman">
-                            <i class="fas fa-user"></i>
-                            <span>Hangman</span>
-                        </li>
-                        <li class="nav-item" data-game="wordsearch">
-                            <i class="fas fa-search"></i>
-                            <span>Word Search</span>
-                        </li>
-                        <li class="nav-item more-games">
-                            <i class="fas fa-ellipsis-h"></i>
-                            <span>More</span>
-                            <div class="dropdown-games">
-                                <div class="dropdown-game" data-game="minesweeper">
-                                    <i class="fas fa-bomb"></i>
-                                    <span>Minesweeper</span>
-                                </div>
-                                <div class="dropdown-game" data-game="slidingpuzzle">
-                                    <i class="fas fa-puzzle-piece"></i>
-                                    <span>Sliding Puzzle</span>
-                                </div>
-                                <div class="dropdown-game" data-game="quiz">
-                                    <i class="fas fa-question-circle"></i>
-                                    <span>Trivia Quiz</span>
-                                </div>
-                                <div class="dropdown-game" data-game="snake">
-                                    <i class="fas fa-snake"></i>
-                                    <span>Snake</span>
-                                </div>
-                                <div class="dropdown-game" data-game="connect4">
-                                    <i class="fas fa-circle"></i>
-                                    <span>Connect Four</span>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </nav>
-                
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-            <p class="tagline">Challenge your mind with 10 exciting puzzle games</p>
+            <h1><i class="fas fa-puzzle-piece"></i> Puzzle Game Collection</h1>
+            <p class="subtitle">Five fun puzzles to challenge your mind!</p>
         </header>
 
-        <!-- Main Content -->
         <main>
-            <!-- Game Selection Cards (Home Page) -->
-            <div id="game-selection" class="game-selection active">
-                <h2>Choose Your Game</h2>
-                <div class="game-cards">
-                    <div class="game-card" data-game="sudoku">
-                        <div class="game-icon">
-                            <i class="fas fa-th"></i>
-                        </div>
-                        <h3>Sudoku</h3>
-                        <p>Fill the grid so every row, column and 3×3 box contains 1-9</p>
-                        <button class="play-btn">Play Now</button>
-                    </div>
-                    <div class="game-card" data-game="memory">
-                        <div class="game-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h3>Memory Match</h3>
-                        <p>Flip cards to find matching pairs. Test your memory!</p>
-                        <button class="play-btn">Play Now</button>
-                    </div>
-                    <div class="game-card" data-game="tictactoe">
-                        <div class="game-icon">
-                            <i class="fas fa-times"></i>
-                        </div>
-                        <h3>Tic-Tac-Toe</h3>
-                        <p>Classic X and O game. Play against the computer or a friend</p>
-                        <button class="play-btn">Play Now</button>
-                    </div>
-                    <div class="game-card" data-game="hangman">
-                        <div class="game-icon">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <h3>Hangman</h3>
-                        <p>Guess the hidden word before the hangman is complete</p>
-                        <button class="play-btn">Play Now</button>
-                    </div>
-                    <div class="game-card" data-game="wordsearch">
-                        <div class="game-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <h3>Word Search</h3>
-                        <p>Find hidden words in a grid of letters</p>
-                        <button class="play-btn">Play Now</button>
-                    </div>
-                    <div class="game-card" data-game="minesweeper">
-                        <div class="game-icon">
-                            <i class="fas fa-bomb"></i>
-                        </div>
-                        <h3>Minesweeper</h3>
-                        <p>Find all mines without triggering any explosions</p>
-                        <button class="play-btn">Play Now</button>
-                    </div>
-                    <div class="game-card" data-game="slidingpuzzle">
-                        <div class="game-icon">
-                            <i class="fas fa-puzzle-piece"></i>
-                        </div>
-                        <h3>Sliding Puzzle</h3>
-                        <p>Arrange tiles in order by sliding them around</p>
-                        <button class="play-btn">Play Now</button>
-                    </div>
-                    <div class="game-card" data-game="quiz">
-                        <div class="game-icon">
-                            <i class="fas fa-question-circle"></i>
-                        </div>
-                        <h3>Trivia Quiz</h3>
-                        <p>Test your knowledge with fun trivia questions</p>
-                        <button class="play-btn">Play Now</button>
-                    </div>
-                    <div class="game-card" data-game="snake">
-                        <div class="game-icon">
-                            <i class="fas fa-snake"></i>
-                        </div>
-                        <h3>Snake Game</h3>
-                        <p>Classic snake game. Eat food and grow without hitting walls</p>
-                        <button class="play-btn">Play Now</button>
-                    </div>
-                    <div class="game-card" data-game="connect4">
-                        <div class="game-icon">
-                            <i class="fas fa-circle"></i>
-                        </div>
-                        <h3>Connect Four</h3>
-                        <p>Connect four of your pieces in a row to win</p>
-                        <button class="play-btn">Play Now</button>
-                    </div>
+            <div class="game-selector">
+                <div class="tabs">
+                    <button class="tab-btn active" data-game="memory">Memory Match</button>
+                    <button class="tab-btn" data-game="slider">Slider Puzzle</button>
+                    <button class="tab-btn" data-game="hangman">Hangman</button>
+                    <button class="tab-btn" data-game="sudoku">Mini Sudoku</button>
+                    <button class="tab-btn" data-game="tic-tac-toe">Tic-Tac-Toe</button>
                 </div>
             </div>
 
-            <!-- Game Area -->
-            <div id="game-area" class="game-area">
-                <div class="game-header">
-                    <div class="game-title-section">
-                        <button id="back-btn" class="back-btn">
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                        <h2 id="game-title">Select a Game</h2>
-                    </div>
-                    <div class="game-controls">
-                        <button id="restart-btn" class="control-btn">
-                            <i class="fas fa-redo"></i> Restart
-                        </button>
-                        <div id="game-stats">
-                            <span id="timer">Time: 00:00</span>
-                            <span id="moves">Moves: 0</span>
-                            <span id="score">Score: 0</span>
+            <div class="game-container">
+                <!-- Memory Match Game -->
+                <div id="memory-game" class="game active">
+                    <div class="game-header">
+                        <h2><i class="fas fa-brain"></i> Memory Match</h2>
+                        <div class="game-info">
+                            <div class="stats">
+                                <span>Moves: <span id="memory-moves">0</span></span>
+                                <span>Matches: <span id="memory-matches">0</span>/8</span>
+                            </div>
+                            <button id="memory-reset" class="btn">Reset Game</button>
                         </div>
+                    </div>
+                    <div class="game-board" id="memory-board"></div>
+                </div>
+
+                <!-- Slider Puzzle Game -->
+                <div id="slider-game" class="game">
+                    <div class="game-header">
+                        <h2><i class="fas fa-sliders-h"></i> Slider Puzzle</h2>
+                        <div class="game-info">
+                            <div class="stats">
+                                <span>Moves: <span id="slider-moves">0</span></span>
+                                <span>Time: <span id="slider-time">0</span>s</span>
+                            </div>
+                            <button id="slider-reset" class="btn">Reset Game</button>
+                        </div>
+                    </div>
+                    <div class="game-board" id="slider-board"></div>
+                </div>
+
+                <!-- Hangman Game -->
+                <div id="hangman-game" class="game">
+                    <div class="game-header">
+                        <h2><i class="fas fa-user"></i> Hangman</h2>
+                        <div class="game-info">
+                            <div class="stats">
+                                <span>Guesses left: <span id="hangman-guesses">6</span></span>
+                                <span>Word: <span id="hangman-category">Animals</span></span>
+                            </div>
+                            <button id="hangman-reset" class="btn">New Word</button>
+                        </div>
+                    </div>
+                    <div class="game-board">
+                        <div class="hangman-display">
+                            <div class="hangman-drawing">
+                                <div class="gallows"></div>
+                                <div class="hangman-part head" id="head"></div>
+                                <div class="hangman-part body" id="body"></div>
+                                <div class="hangman-part left-arm" id="left-arm"></div>
+                                <div class="hangman-part right-arm" id="right-arm"></div>
+                                <div class="hangman-part left-leg" id="left-leg"></div>
+                                <div class="hangman-part right-leg" id="right-leg"></div>
+                            </div>
+                            <div class="word-display" id="hangman-word"></div>
+                        </div>
+                        <div class="keyboard" id="hangman-keyboard"></div>
                     </div>
                 </div>
 
-                <div class="game-container">
-                    <!-- Sudoku Game -->
-                    <div id="sudoku-game" class="game">
-                        <div class="sudoku-header">
-                            <div class="difficulty-selector">
-                                <button class="diff-btn active" data-diff="easy">Easy</button>
-                                <button class="diff-btn" data-diff="medium">Medium</button>
-                                <button class="diff-btn" data-diff="hard">Hard</button>
+                <!-- Mini Sudoku Game -->
+                <div id="sudoku-game" class="game">
+                    <div class="game-header">
+                        <h2><i class="fas fa-th"></i> Mini Sudoku (4×4)</h2>
+                        <div class="game-info">
+                            <div class="stats">
+                                <span>Mistakes: <span id="sudoku-mistakes">0</span>/3</span>
+                                <span>Time: <span id="sudoku-time">0</span>s</span>
                             </div>
+                            <button id="sudoku-reset" class="btn">New Puzzle</button>
+                        </div>
+                    </div>
+                    <div class="game-board">
+                        <div class="sudoku-container">
+                            <div class="sudoku-grid" id="sudoku-grid"></div>
                             <div class="sudoku-controls">
-                                <button id="check-sudoku" class="game-action-btn">Check Solution</button>
-                                <button id="solve-sudoku" class="game-action-btn">Solve Puzzle</button>
+                                <div class="number-selector">
+                                    <button class="num-btn" data-number="1">1</button>
+                                    <button class="num-btn" data-number="2">2</button>
+                                    <button class="num-btn" data-number="3">3</button>
+                                    <button class="num-btn" data-number="4">4</button>
+                                    <button class="num-btn" id="clear-btn">Clear</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="sudoku-board" id="sudoku-board"></div>
-                        <div class="number-selector">
-                            <button class="num-btn" data-value="1">1</button>
-                            <button class="num-btn" data-value="2">2</button>
-                            <button class="num-btn" data-value="3">3</button>
-                            <button class="num-btn" data-value="4">4</button>
-                            <button class="num-btn" data-value="5">5</button>
-                            <button class="num-btn" data-value="6">6</button>
-                            <button class="num-btn" data-value="7">7</button>
-                            <button class="num-btn" data-value="8">8</button>
-                            <button class="num-btn" data-value="9">9</button>
-                            <button class="num-btn clear" data-value="0"><i class="fas fa-eraser"></i></button>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Memory Game -->
-                    <div id="memory-game" class="game">
-                        <div class="memory-header">
-                            <div class="size-selector">
-                                <button class="size-btn active" data-size="4">4x4</button>
-                                <button class="size-btn" data-size="6">6x6</button>
+                <!-- Tic-Tac-Toe Game -->
+                <div id="tic-tac-toe-game" class="game">
+                    <div class="game-header">
+                        <h2><i class="fas fa-times"></i> Tic-Tac-Toe</h2>
+                        <div class="game-info">
+                            <div class="stats">
+                                <span>Turn: <span id="tic-tac-toe-turn">X</span></span>
+                                <span>Score: <span id="tic-tac-toe-score">X:0 O:0</span></span>
                             </div>
-                            <div class="memory-stats">
-                                <div class="stat">
-                                    <span class="stat-label">Matches:</span>
-                                    <span id="matches">0/8</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="memory-board" id="memory-board"></div>
-                        <div class="memory-instructions">
-                            <p>Flip two cards at a time to find matching pairs. Try to complete the board with the fewest moves!</p>
+                            <button id="tic-tac-toe-reset" class="btn">New Game</button>
                         </div>
                     </div>
-
-                    <!-- Tic Tac Toe Game -->
-                    <div id="tictactoe-game" class="game">
-                        <div class="tictactoe-header">
-                            <div class="mode-selector">
-                                <button class="mode-btn active" data-mode="player">Player vs Player</button>
-                                <button class="mode-btn" data-mode="computer">Player vs Computer</button>
-                            </div>
-                            <div class="player-info">
-                                <div class="current-player">
-                                    <span>Current Player:</span>
-                                    <div class="player-symbol" id="current-player">X</div>
-                                </div>
-                                <div class="score">
-                                    <div class="score-item">
-                                        <span>X Wins:</span>
-                                        <span id="x-wins">0</span>
-                                    </div>
-                                    <div class="score-item">
-                                        <span>O Wins:</span>
-                                        <span id="o-wins">0</span>
-                                    </div>
-                                    <div class="score-item">
-                                        <span>Draws:</span>
-                                        <span id="draws">0</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tictactoe-board" id="tictactoe-board"></div>
-                        <div class="tictactoe-controls">
-                            <button id="reset-score" class="game-action-btn">Reset Score</button>
-                        </div>
-                    </div>
-
-                    <!-- Hangman Game -->
-                    <div id="hangman-game" class="game">
-                        <div class="hangman-header">
-                            <div class="category-selector">
-                                <button class="category-btn active" data-category="animals">Animals</button>
-                                <button class="category-btn" data-category="countries">Countries</button>
-                                <button class="category-btn" data-category="fruits">Fruits</button>
-                            </div>
-                            <div class="hangman-stats">
-                                <div class="stat">
-                                    <span class="stat-label">Lives:</span>
-                                    <span id="lives">6</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="stat-label">Score:</span>
-                                    <span id="hangman-score">0</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hangman-container">
-                            <div class="hangman-figure">
-                                <div class="hangman-part" id="gallows"></div>
-                                <div class="hangman-part" id="head"></div>
-                                <div class="hangman-part" id="body"></div>
-                                <div class="hangman-part" id="left-arm"></div>
-                                <div class="hangman-part" id="right-arm"></div>
-                                <div class="hangman-part" id="left-leg"></div>
-                                <div class="hangman-part" id="right-leg"></div>
-                            </div>
-                            <div class="hangman-word">
-                                <div class="word-display" id="word-display"></div>
-                            </div>
-                        </div>
-                        <div class="keyboard">
-                            <div class="keyboard-row">
-                                <button class="key" data-key="A">A</button>
-                                <button class="key" data-key="B">B</button>
-                                <button class="key" data-key="C">C</button>
-                                <button class="key" data-key="D">D</button>
-                                <button class="key" data-key="E">E</button>
-                                <button class="key" data-key="F">F</button>
-                                <button class="key" data-key="G">G</button>
-                            </div>
-                            <div class="keyboard-row">
-                                <button class="key" data-key="H">H</button>
-                                <button class="key" data-key="I">I</button>
-                                <button class="key" data-key="J">J</button>
-                                <button class="key" data-key="K">K</button>
-                                <button class="key" data-key="L">L</button>
-                                <button class="key" data-key="M">M</button>
-                                <button class="key" data-key="N">N</button>
-                            </div>
-                            <div class="keyboard-row">
-                                <button class="key" data-key="O">O</button>
-                                <button class="key" data-key="P">P</button>
-                                <button class="key" data-key="Q">Q</button>
-                                <button class="key" data-key="R">R</button>
-                                <button class="key" data-key="S">S</button>
-                                <button class="key" data-key="T">T</button>
-                                <button class="key" data-key="U">U</button>
-                            </div>
-                            <div class="keyboard-row">
-                                <button class="key" data-key="V">V</button>
-                                <button class="key" data-key="W">W</button>
-                                <button class="key" data-key="X">X</button>
-                                <button class="key" data-key="Y">Y</button>
-                                <button class="key" data-key="Z">Z</button>
-                            </div>
-                        </div>
-                        <div class="hangman-controls">
-                            <button id="new-word-btn" class="game-action-btn">New Word</button>
-                            <button id="hint-btn" class="game-action-btn">Hint</button>
-                        </div>
-                    </div>
-
-                    <!-- Word Search Game -->
-                    <div id="wordsearch-game" class="game">
-                        <div class="wordsearch-header">
-                            <div class="wordsearch-category">
-                                <button class="ws-category-btn active" data-category="animals">Animals</button>
-                                <button class="ws-category-btn" data-category="fruits">Fruits</button>
-                                <button class="ws-category-btn" data-category="countries">Countries</button>
-                            </div>
-                            <div class="wordsearch-stats">
-                                <div class="stat">
-                                    <span class="stat-label">Found:</span>
-                                    <span id="words-found">0/10</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="wordsearch-container">
-                            <div class="wordsearch-grid" id="wordsearch-grid"></div>
-                            <div class="wordsearch-words">
-                                <h3>Words to Find:</h3>
-                                <div class="word-list" id="word-list"></div>
-                            </div>
-                        </div>
-                        <div class="wordsearch-controls">
-                            <button id="check-wordsearch" class="game-action-btn">Check</button>
-                            <button id="solve-wordsearch" class="game-action-btn">Show Solution</button>
-                        </div>
-                    </div>
-
-                    <!-- Minesweeper Game -->
-                    <div id="minesweeper-game" class="game">
-                        <div class="minesweeper-header">
-                            <div class="difficulty-selector">
-                                <button class="ms-diff-btn active" data-diff="easy">Easy (9x9)</button>
-                                <button class="ms-diff-btn" data-diff="medium">Medium (16x16)</button>
-                                <button class="ms-diff-btn" data-diff="hard">Hard (24x24)</button>
-                            </div>
-                            <div class="minesweeper-stats">
-                                <div class="stat">
-                                    <span class="stat-label">Mines:</span>
-                                    <span id="mines-left">10</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="stat-label">Flags:</span>
-                                    <span id="flags">0</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="minesweeper-grid" id="minesweeper-grid"></div>
-                        <div class="minesweeper-controls">
-                            <div class="mode-toggle">
-                                <button class="mode-toggle-btn active" id="dig-mode"><i class="fas fa-mouse-pointer"></i> Dig</button>
-                                <button class="mode-toggle-btn" id="flag-mode"><i class="fas fa-flag"></i> Flag</button>
-                            </div>
-                            <button id="new-minesweeper" class="game-action-btn">New Game</button>
-                        </div>
-                    </div>
-
-                    <!-- Sliding Puzzle Game -->
-                    <div id="slidingpuzzle-game" class="game">
-                        <div class="slidingpuzzle-header">
-                            <div class="puzzle-size-selector">
-                                <button class="puzzle-size-btn active" data-size="3">3x3</button>
-                                <button class="puzzle-size-btn" data-size="4">4x4</button>
-                                <button class="puzzle-size-btn" data-size="5">5x5</button>
-                            </div>
-                            <div class="slidingpuzzle-stats">
-                                <div class="stat">
-                                    <span class="stat-label">Moves:</span>
-                                    <span id="puzzle-moves">0</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="stat-label">Time:</span>
-                                    <span id="puzzle-time">00:00</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="slidingpuzzle-container">
-                            <div class="slidingpuzzle-board" id="slidingpuzzle-board"></div>
-                            <div class="puzzle-image">
-                                <img id="puzzle-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%236c63ff'/%3E%3Ctext x='150' y='150' font-family='Arial' font-size='40' fill='white' text-anchor='middle' dominant-baseline='middle'%3EPuzzle%3C/text%3E%3C/svg%3E" alt="Puzzle Image">
-                            </div>
-                        </div>
-                        <div class="slidingpuzzle-controls">
-                            <button id="shuffle-puzzle" class="game-action-btn">Shuffle</button>
-                            <button id="solve-puzzle" class="game-action-btn">Solve</button>
-                        </div>
-                    </div>
-
-                    <!-- Trivia Quiz Game -->
-                    <div id="quiz-game" class="game">
-                        <div class="quiz-header">
-                            <div class="quiz-category-selector">
-                                <button class="quiz-category-btn active" data-category="general">General</button>
-                                <button class="quiz-category-btn" data-category="science">Science</button>
-                                <button class="quiz-category-btn" data-category="history">History</button>
-                                <button class="quiz-category-btn" data-category="geography">Geography</button>
-                            </div>
-                            <div class="quiz-stats">
-                                <div class="stat">
-                                    <span class="stat-label">Question:</span>
-                                    <span id="question-number">1/10</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="stat-label">Score:</span>
-                                    <span id="quiz-score">0</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="quiz-container">
-                            <div class="question-card">
-                                <div class="question" id="quiz-question"></div>
-                                <div class="options" id="quiz-options"></div>
-                            </div>
-                            <div class="quiz-progress">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" id="quiz-progress"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="quiz-controls">
-                            <button id="next-question" class="game-action-btn">Next Question</button>
-                            <button id="restart-quiz" class="game-action-btn">Restart Quiz</button>
-                        </div>
-                    </div>
-
-                    <!-- Snake Game -->
-                    <div id="snake-game" class="game">
-                        <div class="snake-header">
-                            <div class="snake-difficulty">
-                                <button class="snake-diff-btn active" data-diff="easy">Easy</button>
-                                <button class="snake-diff-btn" data-diff="medium">Medium</button>
-                                <button class="snake-diff-btn" data-diff="hard">Hard</button>
-                            </div>
-                            <div class="snake-stats">
-                                <div class="stat">
-                                    <span class="stat-label">Score:</span>
-                                    <span id="snake-score">0</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="stat-label">High Score:</span>
-                                    <span id="snake-highscore">0</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="snake-container">
-                            <div class="snake-board" id="snake-board"></div>
-                            <div class="snake-controls-mobile">
-                                <div class="direction-controls">
-                                    <button class="dir-btn" id="up-btn"><i class="fas fa-arrow-up"></i></button>
-                                    <div class="horizontal-controls">
-                                        <button class="dir-btn" id="left-btn"><i class="fas fa-arrow-left"></i></button>
-                                        <button class="dir-btn" id="down-btn"><i class="fas fa-arrow-down"></i></button>
-                                        <button class="dir-btn" id="right-btn"><i class="fas fa-arrow-right"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="snake-controls">
-                            <button id="pause-snake" class="game-action-btn">Pause</button>
-                            <button id="restart-snake" class="game-action-btn">Restart</button>
-                        </div>
-                    </div>
-
-                    <!-- Connect Four Game -->
-                    <div id="connect4-game" class="game">
-                        <div class="connect4-header">
-                            <div class="connect4-mode-selector">
-                                <button class="connect4-mode-btn active" data-mode="player">Player vs Player</button>
-                                <button class="connect4-mode-btn" data-mode="computer">Player vs Computer</button>
-                            </div>
-                            <div class="connect4-stats">
-                                <div class="stat">
-                                    <span class="stat-label">Player 1:</span>
-                                    <span id="player1-score">0</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="stat-label">Player 2:</span>
-                                    <span id="player2-score">0</span>
-                                </div>
-                                <div class="current-player-connect4">
-                                    <span>Current:</span>
-                                    <div class="player-chip player1-chip"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="connect4-container">
-                            <div class="connect4-board" id="connect4-board"></div>
-                        </div>
-                        <div class="connect4-controls">
-                            <button id="drop-btn-1" class="drop-btn" data-col="1">Drop</button>
-                            <button id="drop-btn-2" class="drop-btn" data-col="2">Drop</button>
-                            <button id="drop-btn-3" class="drop-btn" data-col="3">Drop</button>
-                            <button id="drop-btn-4" class="drop-btn" data-col="4">Drop</button>
-                            <button id="drop-btn-5" class="drop-btn" data-col="5">Drop</button>
-                            <button id="drop-btn-6" class="drop-btn" data-col="6">Drop</button>
-                            <button id="drop-btn-7" class="drop-btn" data-col="7">Drop</button>
-                        </div>
-                        <div class="connect4-game-controls">
-                            <button id="reset-connect4" class="game-action-btn">Reset Game</button>
-                            <button id="reset-scores-connect4" class="game-action-btn">Reset Scores</button>
-                        </div>
-                    </div>
-
-                    <!-- Default State -->
-                    <div id="default-state" class="game default-state">
-                        <div class="default-content">
-                            <i class="fas fa-gamepad"></i>
-                            <h3>Select a Game to Play</h3>
-                            <p>Use the navigation menu or click on any of the game cards to start playing!</p>
-                            <div class="feature-list">
-                                <div class="feature">
-                                    <i class="fas fa-brain"></i>
-                                    <span>Brain Training</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fas fa-chart-line"></i>
-                                    <span>Track Progress</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fas fa-trophy"></i>
-                                    <span>Achievements</span>
-                                </div>
+                    <div class="game-board">
+                        <div class="tic-tac-toe-container">
+                            <div class="tic-tac-toe-grid" id="tic-tac-toe-grid"></div>
+                            <div class="game-mode">
+                                <button class="mode-btn active" data-mode="pvp">Player vs Player</button>
+                                <button class="mode-btn" data-mode="pvc">Player vs Computer</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Player Stats -->
-            <div class="player-stats">
-                <h2>Your Stats</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Total Play Time</h3>
-                            <p id="total-time">00:00</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Games Completed</h3>
-                            <p id="games-completed">0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-fire"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Current Streak</h3>
-                            <p id="current-streak">0 days</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-gamepad"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Games Played</h3>
-                            <p id="total-games">0</p>
-                        </div>
-                    </div>
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+                <div class="instructions-content">
+                    <p id="game-instructions">Select a puzzle game from the tabs above to see its instructions here.</p>
                 </div>
             </div>
         </main>
 
-        <!-- Footer -->
         <footer>
-            <p>Puzzle Game Hub &copy; <span id="current-year">2023</span> | 10 Exciting Puzzle Games</p>
-            <div class="footer-links">
-                <a href="#"><i class="fab fa-github"></i> GitHub</a>
-                <a href="#"><i class="fas fa-question-circle"></i> Help</a>
-                <a href="#"><i class="fas fa-cog"></i> Settings</a>
-            </div>
+            <p>Puzzle Game Collection &copy; 2023 | Built with HTML, CSS & JavaScript</p>
         </footer>
     </div>
 
