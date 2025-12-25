@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Collection</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-gamepad"></i> Game Collection</h1>
+            <p class="subtitle">Play chess, tic-tac-toe, and memory match - all in one place!</p>
+        </header>
+        
+        <main>
+            <div class="tabs">
+                <button class="tab active" data-tab="chess">
+                    <i class="fas fa-chess-board"></i> Chess
+                </button>
+                <button class="tab" data-tab="tictactoe">
+                    <i class="fas fa-times"></i> Tic-Tac-Toe
+                </button>
+                <button class="tab" data-tab="memory">
+                    <i class="fas fa-brain"></i> Memory Match
+                </button>
+            </div>
+            
+            <div class="game-container">
+                <!-- Chess Game -->
+                <div id="chess" class="game-content active">
+                    <div class="game-header">
+                        <h2>Chess</h2>
+                        <div class="game-info">
+                            <div class="player-info">
+                                <span class="player-label">Player:</span>
+                                <span class="player-turn">White</span>
+                            </div>
+                            <div class="game-controls">
+                                <button id="reset-chess" class="btn"><i class="fas fa-redo"></i> Reset Game</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chess-board" id="chess-board">
+                        <!-- Chess board will be generated with JavaScript -->
+                    </div>
+                    <div class="game-instructions">
+                        <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+                        <p>Click on a piece to select it, then click on a highlighted square to move. White moves first.</p>
+                    </div>
+                </div>
+                
+                <!-- Tic-Tac-Toe Game -->
+                <div id="tictactoe" class="game-content">
+                    <div class="game-header">
+                        <h2>Tic-Tac-Toe</h2>
+                        <div class="game-info">
+                            <div class="player-info">
+                                <span class="player-label">Current Player:</span>
+                                <span id="ttt-player" class="player-turn">X</span>
+                            </div>
+                            <div class="game-status" id="ttt-status">Player X's Turn</div>
+                            <div class="game-controls">
+                                <button id="reset-ttt" class="btn"><i class="fas fa-redo"></i> Reset Game</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ttt-board" id="ttt-board">
+                        <!-- Tic-tac-toe board will be generated with JavaScript -->
+                    </div>
+                    <div class="game-instructions">
+                        <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+                        <p>Players take turns placing X and O marks. The first to get 3 in a row wins.</p>
+                    </div>
+                </div>
+                
+                <!-- Memory Match Game -->
+                <div id="memory" class="game-content">
+                    <div class="game-header">
+                        <h2>Memory Match</h2>
+                        <div class="game-info">
+                            <div class="player-info">
+                                <span class="player-label">Moves:</span>
+                                <span id="move-count">0</span>
+                            </div>
+                            <div class="player-info">
+                                <span class="player-label">Matches:</span>
+                                <span id="match-count">0/8</span>
+                            </div>
+                            <div class="game-controls">
+                                <button id="reset-memory" class="btn"><i class="fas fa-redo"></i> New Game</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="memory-board" id="memory-board">
+                        <!-- Memory cards will be generated with JavaScript -->
+                    </div>
+                    <div class="game-instructions">
+                        <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+                        <p>Click on cards to reveal them. Find matching pairs of symbols.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Game Collection &copy; <span id="current-year">2023</span></p>
+            <p>All games are playable directly in your browser</p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
