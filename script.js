@@ -1,26 +1,80 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Set current year in footer
-    document.getElementById('current-year').textContent = new Date().getFullYear();
+    // Set current year
+    const currentYear = new Date().getFullYear();
+    document.getElementById('current-year').textContent = currentYear;
+    document.getElementById('footer-year').textContent = currentYear;
+    
+    // Menu toggle functionality
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const closeMenu = document.getElementById('closeMenu');
+    const mainContent = document.getElementById('mainContent');
+    const menuLinks = document.querySelectorAll('.menu-link');
+    
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.add('open');
+        menuToggle.style.opacity = '0';
+    });
+    
+    closeMenu.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        menuToggle.style.opacity = '1';
+    });
+    
+    // Close menu when clicking outside on mobile
+    mainContent.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.remove('open');
+            menuToggle.style.opacity = '1';
+        }
+    });
+    
+    // Menu navigation
+    menuLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetTab = link.getAttribute('data-tab');
+            
+            // Update active menu item
+            menuLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            
+            // Switch to corresponding tab
+            switchTab(targetTab);
+            
+            // Close menu on mobile
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('open');
+                menuToggle.style.opacity = '1';
+            }
+        });
+    });
     
     // Tab switching functionality
     const tabs = document.querySelectorAll('.tab');
     const gameContents = document.querySelectorAll('.game-content');
     
+    function switchTab(tabId) {
+        // Update active tab
+        tabs.forEach(tab => {
+            tab.classList.toggle('active', tab.getAttribute('data-tab') === tabId);
+        });
+        
+        // Show corresponding game content
+        gameContents.forEach(content => {
+            content.classList.toggle('active', content.id === tabId);
+        });
+        
+        // Update active menu item
+        menuLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('data-tab') === tabId);
+        });
+    }
+    
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const targetTab = tab.getAttribute('data-tab');
-            
-            // Update active tab
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            
-            // Show corresponding game content
-            gameContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === targetTab) {
-                    content.classList.add('active');
-                }
-            });
+            switchTab(targetTab);
         });
     });
     
@@ -28,13 +82,26 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeChess();
     initializeTicTacToe();
     initializeMemoryMatch();
+    initializeSettings();
     
-    // Chess Game Implementation
+    // Chess Game Implementation with Auto Player
     function initializeChess() {
         const chessBoard = document.getElementById('chess-board');
         const resetButton = document.getElementById('reset-chess');
+        const modeToggle = document.getElementById('toggle-chess-mode');
+        const modeDisplay = document.getElementById('chess-mode');
+        const modeBtn = document.getElementById('chess-mode-btn');
+        const playerDisplay = document.getElementById('chess-player');
         
-        // Simple chess piece representation
+        // Game state
+        let boardState = [];
+        let selectedPiece = null;
+        let currentPlayer = 'white';
+        let vsComputer = false;
+        let gameActive = true;
+        let computerThinking = false;
+        
+        // Initial board setup
         const initialBoard = [
             ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
             ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
@@ -46,10 +113,18 @@ document.addEventListener('DOMContentLoaded', function() {
             ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
         ];
         
-        let selectedPiece = null;
-        let currentPlayer = 'white';
-        let boardState = JSON.parse(JSON.stringify(initialBoard));
+        // Initialize game
+        function initGame() {
+            boardState = JSON.parse(JSON.stringify(initialBoard));
+            selectedPiece = null;
+            currentPlayer = 'white';
+            gameActive = true;
+            computerThinking = false;
+            renderChessBoard();
+            updateStatus();
+        }
         
+        // Render chess board
         function renderChessBoard() {
             chessBoard.innerHTML = '';
             
@@ -70,16 +145,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                     
-                    square.addEventListener('click', () => handleChessSquareClick(row, col));
+                    square.addEventListener('click', () => handleSquareClick(row, col));
                     chessBoard.appendChild(square);
                 }
             }
             
-            updatePlayerDisplay();
+            updateStatus();
         }
         
-        function handleChessSquareClick(row, col) {
-            const square = document.querySelector(`.chess-square[data-row="${row}"][data-col="${col}"]`);
+        // Handle square click
+        function handleSquareClick(row, col) {
+            if (!gameActive || computerThinking) return;
+            
+            const piece = boardState[row][col];
             
             // If a piece is already selected
             if (selectedPiece) {
@@ -91,81 +169,61 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
                 
-                // Check if the move is valid (simplified logic)
-                const piece = boardState[prevRow][prevCol];
-                const targetPiece = boardState[row][col];
-                
-                // Basic move validation
-                let isValidMove = false;
-                
-                // Pawn moves (simplified)
-                if (piece === '♙' && currentPlayer === 'white') {
-                    // White pawn moves forward one square
-                    if (col === prevCol && row === prevRow - 1 && !targetPiece) {
-                        isValidMove = true;
-                    }
-                } else if (piece === '♟' && currentPlayer === 'black') {
-                    // Black pawn moves forward one square
-                    if (col === prevCol && row === prevRow + 1 && !targetPiece) {
-                        isValidMove = true;
-                    }
-                } else {
-                    // For other pieces, allow any move (simplified for demo)
-                    isValidMove = true;
-                }
-                
-                if (isValidMove) {
+                // Check if the move is valid
+                if (isValidMove(prevRow, prevCol, row, col)) {
                     // Make the move
-                    boardState[row][col] = piece;
-                    boardState[prevRow][prevCol] = '';
+                    makeMove(prevRow, prevCol, row, col);
                     
-                    // Switch player
-                    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
-                    
-                    clearSelection();
-                    renderChessBoard();
+                    // If playing against computer and it's computer's turn
+                    if (vsComputer && currentPlayer === 'black' && gameActive) {
+                        setTimeout(computerMove, 800);
+                    }
                 } else {
                     clearSelection();
+                    // Try to select another piece if valid
+                    if (piece && isCurrentPlayerPiece(piece)) {
+                        selectPiece(row, col);
+                    }
                 }
             } else {
                 // Select a piece if it exists and belongs to current player
-                const piece = boardState[row][col];
-                if (piece) {
-                    const isWhitePiece = piece.charCodeAt(0) > 9817;
-                    if ((currentPlayer === 'white' && isWhitePiece) || 
-                        (currentPlayer === 'black' && !isWhitePiece)) {
-                        selectedPiece = [row, col];
-                        square.classList.add('selected');
-                        
-                        // Highlight possible moves (simplified)
-                        highlightPossibleMoves(row, col, piece);
-                    }
+                if (piece && isCurrentPlayerPiece(piece)) {
+                    selectPiece(row, col);
                 }
             }
         }
         
-        function highlightPossibleMoves(row, col, piece) {
-            // Simplified possible moves for demo
-            let moves = [];
+        // Check if piece belongs to current player
+        function isCurrentPlayerPiece(piece) {
+            const isWhitePiece = piece.charCodeAt(0) > 9817;
+            return (currentPlayer === 'white' && isWhitePiece) || 
+                   (currentPlayer === 'black' && !isWhitePiece);
+        }
+        
+        // Select a piece
+        function selectPiece(row, col) {
+            clearSelection();
+            selectedPiece = [row, col];
             
-            if (piece === '♙' || piece === '♟') {
-                // Pawns move forward one square
-                if (piece === '♙') {
-                    if (row > 0) moves.push([row-1, col]);
-                } else {
-                    if (row < 7) moves.push([row+1, col]);
-                }
-            } else {
-                // For other pieces, highlight adjacent squares
-                const directions = [[-1,0], [1,0], [0,-1], [0,1], [-1,-1], [-1,1], [1,-1], [1,1]];
-                for (const [dr, dc] of directions) {
-                    const newRow = row + dr;
-                    const newCol = col + dc;
-                    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-                        moves.push([newRow, newCol]);
-                    }
-                }
-            }
+            const square = document.querySelector(`.chess-square[data-row="${row}"][data-col="${col}"]`);
+            square.classList.add('selected');
+            
+            // Highlight possible moves
+            highlightPossibleMoves(row, col);
+        }
+        
+        // Clear selection
+        function clearSelection() {
+            document.querySelectorAll('.chess-square').forEach(square => {
+                square.classList.remove('selected', 'possible-move');
+            });
+            selectedPiece = null;
+        }
+        
+        // Highlight possible moves (simplified)
+        function highlightPossibleMoves(row, col) {
+            const piece = boardState[row][col];
+            const moves = getPossibleMoves(row, col, piece);
             
             moves.forEach(([r, c]) => {
                 const square = document.querySelector(`.chess-square[data-row="${r}"][data-col="${c}"]`);
@@ -175,48 +233,241 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        function clearSelection() {
-            document.querySelectorAll('.chess-square').forEach(square => {
-                square.classList.remove('selected', 'possible-move');
-            });
-            selectedPiece = null;
+        // Get possible moves (simplified logic)
+        function getPossibleMoves(row, col, piece) {
+            const moves = [];
+            const isWhite = piece.charCodeAt(0) > 9817;
+            
+            // Pawn moves
+            if (piece === '♙' || piece === '♟') {
+                const direction = isWhite ? -1 : 1;
+                // Move forward
+                if (isInBounds(row + direction, col) && !boardState[row + direction][col]) {
+                    moves.push([row + direction, col]);
+                    // Initial double move
+                    if ((isWhite && row === 6) || (!isWhite && row === 1)) {
+                        if (!boardState[row + 2 * direction][col]) {
+                            moves.push([row + 2 * direction, col]);
+                        }
+                    }
+                }
+                // Captures
+                [-1, 1].forEach(dc => {
+                    const newRow = row + direction;
+                    const newCol = col + dc;
+                    if (isInBounds(newRow, newCol) && boardState[newRow][newCol] && 
+                        isWhite !== (boardState[newRow][newCol].charCodeAt(0) > 9817)) {
+                        moves.push([newRow, newCol]);
+                    }
+                });
+            }
+            // Knight moves (simplified)
+            else if (piece === '♘' || piece === '♞') {
+                const knightMoves = [
+                    [-2, -1], [-2, 1], [-1, -2], [-1, 2],
+                    [1, -2], [1, 2], [2, -1], [2, 1]
+                ];
+                knightMoves.forEach(([dr, dc]) => {
+                    const newRow = row + dr;
+                    const newCol = col + dc;
+                    if (isInBounds(newRow, newCol) && 
+                        (!boardState[newRow][newCol] || 
+                         isWhite !== (boardState[newRow][newCol].charCodeAt(0) > 9817))) {
+                        moves.push([newRow, newCol]);
+                    }
+                });
+            }
+            // Other pieces - allow adjacent moves for simplicity
+            else {
+                const directions = [[-1,0], [1,0], [0,-1], [0,1], [-1,-1], [-1,1], [1,-1], [1,1]];
+                for (const [dr, dc] of directions) {
+                    const newRow = row + dr;
+                    const newCol = col + dc;
+                    if (isInBounds(newRow, newCol) && 
+                        (!boardState[newRow][newCol] || 
+                         isWhite !== (boardState[newRow][newCol].charCodeAt(0) > 9817))) {
+                        moves.push([newRow, newCol]);
+                    }
+                }
+            }
+            
+            return moves;
         }
         
-        function updatePlayerDisplay() {
-            const playerTurnElement = document.querySelector('#chess .player-turn');
-            if (playerTurnElement) {
-                playerTurnElement.textContent = currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1);
+        // Check if coordinates are within board
+        function isInBounds(row, col) {
+            return row >= 0 && row < 8 && col >= 0 && col < 8;
+        }
+        
+        // Validate move
+        function isValidMove(fromRow, fromCol, toRow, toCol) {
+            const piece = boardState[fromRow][fromCol];
+            const moves = getPossibleMoves(fromRow, fromCol, piece);
+            
+            return moves.some(([r, c]) => r === toRow && c === toCol);
+        }
+        
+        // Make a move
+        function makeMove(fromRow, fromCol, toRow, toCol) {
+            const piece = boardState[fromRow][fromCol];
+            
+            // Highlight computer move if applicable
+            if (vsComputer && currentPlayer === 'white') {
+                const fromSquare = document.querySelector(`.chess-square[data-row="${fromRow}"][data-col="${fromCol}"]`);
+                const toSquare = document.querySelector(`.chess-square[data-row="${toRow}"][data-col="${toCol}"]`);
+                if (fromSquare && toSquare) {
+                    fromSquare.classList.add('computer-move');
+                    toSquare.classList.add('computer-move');
+                    setTimeout(() => {
+                        fromSquare.classList.remove('computer-move');
+                        toSquare.classList.remove('computer-move');
+                    }, 1000);
+                }
+            }
+            
+            // Update board
+            boardState[toRow][toCol] = piece;
+            boardState[fromRow][fromCol] = '';
+            
+            // Switch player
+            currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+            
+            // Check for checkmate (simplified)
+            checkGameStatus();
+            
+            clearSelection();
+            renderChessBoard();
+        }
+        
+        // Computer move logic
+        function computerMove() {
+            if (!gameActive || currentPlayer !== 'black') return;
+            
+            computerThinking = true;
+            
+            setTimeout(() => {
+                // Find all black pieces
+                const blackPieces = [];
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const piece = boardState[row][col];
+                        if (piece && piece.charCodeAt(0) <= 9817) { // Black pieces
+                            const moves = getPossibleMoves(row, col, piece);
+                            if (moves.length > 0) {
+                                blackPieces.push({row, col, piece, moves});
+                            }
+                        }
+                    }
+                }
+                
+                if (blackPieces.length > 0) {
+                    // Select random piece and move
+                    const randomPiece = blackPieces[Math.floor(Math.random() * blackPieces.length)];
+                    const randomMove = randomPiece.moves[Math.floor(Math.random() * randomPiece.moves.length)];
+                    
+                    // Make the move
+                    makeMove(randomPiece.row, randomPiece.col, randomMove[0], randomMove[1]);
+                }
+                
+                computerThinking = false;
+            }, 800);
+        }
+        
+        // Check game status
+        function checkGameStatus() {
+            // Simplified: Check if king is captured
+            let whiteKing = false;
+            let blackKing = false;
+            
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    if (boardState[row][col] === '♔') whiteKing = true;
+                    if (boardState[row][col] === '♚') blackKing = true;
+                }
+            }
+            
+            if (!whiteKing) {
+                alert('Black wins!');
+                gameActive = false;
+            } else if (!blackKing) {
+                alert('White wins!');
+                gameActive = false;
             }
         }
         
-        resetButton.addEventListener('click', () => {
-            boardState = JSON.parse(JSON.stringify(initialBoard));
-            currentPlayer = 'white';
-            clearSelection();
-            renderChessBoard();
+        // Update game status display
+        function updateStatus() {
+            playerDisplay.textContent = currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1);
+            playerDisplay.style.color = currentPlayer === 'white' ? '#f1f1f1' : '#333';
+        }
+        
+        // Toggle computer mode
+        modeToggle.addEventListener('click', () => {
+            vsComputer = !vsComputer;
+            modeDisplay.textContent = vsComputer ? 'Player vs Computer' : 'Player vs Player';
+            modeBtn.textContent = vsComputer ? 'vs Player' : 'vs Computer';
+            initGame();
         });
         
-        renderChessBoard();
+        // Reset game
+        resetButton.addEventListener('click', initGame);
+        
+        // Initialize the game
+        initGame();
     }
     
-    // Tic-Tac-Toe Game Implementation
+    // Tic-Tac-Toe Game with Auto Player
     function initializeTicTacToe() {
         const tttBoard = document.getElementById('ttt-board');
         const resetButton = document.getElementById('reset-ttt');
+        const modeToggle = document.getElementById('toggle-ttt-mode');
+        const modeBtn = document.getElementById('ttt-mode-btn');
         const playerDisplay = document.getElementById('ttt-player');
         const statusDisplay = document.getElementById('ttt-status');
+        const difficultySelect = document.getElementById('ttt-difficulty-select');
+        const difficultyDisplay = document.getElementById('ttt-difficulty');
         
+        // Game state
         let board = ['', '', '', '', '', '', '', '', ''];
         let currentPlayer = 'X';
         let gameActive = true;
+        let vsComputer = false;
+        let computerDifficulty = 'easy';
+        let playerStarts = true;
         
+        // Winning combinations
         const winningConditions = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
             [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
             [0, 4, 8], [2, 4, 6] // diagonals
         ];
         
-        function renderTicTacToeBoard() {
+        // Initialize game
+        function initGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+            
+            // Determine starting player
+            const startSetting = document.getElementById('ttt-start-player')?.value || 'random';
+            if (startSetting === 'random') {
+                playerStarts = Math.random() > 0.5;
+            } else {
+                playerStarts = startSetting === 'player';
+            }
+            
+            currentPlayer = playerStarts ? 'X' : 'O';
+            
+            renderBoard();
+            updateStatus();
+            
+            // If computer starts and vsComputer mode is on
+            if (vsComputer && !playerStarts && gameActive) {
+                setTimeout(computerMove, 800);
+            }
+        }
+        
+        // Render board
+        function renderBoard() {
             tttBoard.innerHTML = '';
             
             for (let i = 0; i < 9; i++) {
@@ -227,6 +478,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (board[i]) {
                     cell.textContent = board[i];
                     cell.classList.add(board[i] === 'X' ? 'x-marker' : 'o-marker');
+                    if (board[i] === 'O' && vsComputer) {
+                        cell.classList.add('computer-cell');
+                    }
                 }
                 
                 cell.addEventListener('click', () => handleCellClick(i));
@@ -237,14 +491,112 @@ document.addEventListener('DOMContentLoaded', function() {
             playerDisplay.style.color = currentPlayer === 'X' ? '#4cc9f0' : '#f72585';
         }
         
+        // Handle cell click
         function handleCellClick(index) {
             if (board[index] !== '' || !gameActive) return;
             
-            board[index] = currentPlayer;
-            renderTicTacToeBoard();
-            checkResult();
+            // If playing against computer and it's computer's turn
+            if (vsComputer && currentPlayer === 'O') return;
+            
+            makeMove(index);
         }
         
+        // Make a move
+        function makeMove(index) {
+            board[index] = currentPlayer;
+            renderBoard();
+            
+            // Check for win or draw
+            checkResult();
+            
+            // If game is still active, switch player
+            if (gameActive) {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                updateStatus();
+                
+                // If playing against computer and it's computer's turn
+                if (vsComputer && currentPlayer === 'O') {
+                    setTimeout(computerMove, 800);
+                }
+            }
+        }
+        
+        // Computer move logic
+        function computerMove() {
+            if (!gameActive || currentPlayer !== 'O') return;
+            
+            let moveIndex;
+            
+            // Different strategies based on difficulty
+            if (computerDifficulty === 'easy') {
+                // Easy: Random move
+                moveIndex = getRandomMove();
+            } else if (computerDifficulty === 'medium') {
+                // Medium: Try to win, block if needed, otherwise random
+                moveIndex = getWinningMove('O') || getWinningMove('X') || getRandomMove();
+            } else {
+                // Hard: Minimax algorithm or strategic
+                moveIndex = getBestMove();
+            }
+            
+            if (moveIndex !== undefined) {
+                setTimeout(() => makeMove(moveIndex), 500);
+            }
+        }
+        
+        // Get a random available move
+        function getRandomMove() {
+            const availableMoves = board
+                .map((cell, index) => cell === '' ? index : null)
+                .filter(index => index !== null);
+            
+            return availableMoves.length > 0 
+                ? availableMoves[Math.floor(Math.random() * availableMoves.length)]
+                : undefined;
+        }
+        
+        // Check for winning move for a player
+        function getWinningMove(player) {
+            for (const condition of winningConditions) {
+                const [a, b, c] = condition;
+                const cells = [board[a], board[b], board[c]];
+                
+                // If two cells are player's and one is empty
+                if (cells.filter(cell => cell === player).length === 2) {
+                    const emptyIndex = condition.find(index => board[index] === '');
+                    if (emptyIndex !== undefined) {
+                        return emptyIndex;
+                    }
+                }
+            }
+            return null;
+        }
+        
+        // Get best move (simplified hard difficulty)
+        function getBestMove() {
+            // Try to win
+            const winningMove = getWinningMove('O');
+            if (winningMove !== null) return winningMove;
+            
+            // Try to block opponent
+            const blockMove = getWinningMove('X');
+            if (blockMove !== null) return blockMove;
+            
+            // Take center if available
+            if (board[4] === '') return 4;
+            
+            // Take corners if available
+            const corners = [0, 2, 6, 8];
+            const availableCorners = corners.filter(index => board[index] === '');
+            if (availableCorners.length > 0) {
+                return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+            }
+            
+            // Otherwise random
+            return getRandomMove();
+        }
+        
+        // Check game result
         function checkResult() {
             let roundWon = false;
             let winningCombo = [];
@@ -260,7 +612,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (roundWon) {
                 gameActive = false;
-                statusDisplay.textContent = `Player ${currentPlayer} Wins!`;
+                statusDisplay.textContent = `Player ${board[winningCombo[0]]} Wins!`;
                 statusDisplay.style.color = '#72efdd';
                 
                 // Highlight winning cells
@@ -277,63 +629,152 @@ document.addEventListener('DOMContentLoaded', function() {
                 statusDisplay.style.color = '#f4a261';
                 return;
             }
-            
-            // Switch player
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            statusDisplay.textContent = `Player ${currentPlayer}'s Turn`;
         }
         
-        resetButton.addEventListener('click', () => {
-            board = ['', '', '', '', '', '', '', '', ''];
-            currentPlayer = 'X';
-            gameActive = true;
+        // Update game status
+        function updateStatus() {
+            if (!gameActive) return;
+            
             statusDisplay.textContent = `Player ${currentPlayer}'s Turn`;
             statusDisplay.style.color = '#72efdd';
-            renderTicTacToeBoard();
+        }
+        
+        // Toggle computer mode
+        modeToggle.addEventListener('click', () => {
+            vsComputer = !vsComputer;
+            modeBtn.textContent = vsComputer ? 'vs Player' : 'vs Computer';
+            difficultySelect.style.display = vsComputer ? 'block' : 'none';
+            difficultyDisplay.textContent = vsComputer ? computerDifficulty.charAt(0).toUpperCase() + computerDifficulty.slice(1) : 'N/A';
+            initGame();
         });
         
-        renderTicTacToeBoard();
+        // Update difficulty
+        difficultySelect.addEventListener('change', (e) => {
+            computerDifficulty = e.target.value;
+            difficultyDisplay.textContent = computerDifficulty.charAt(0).toUpperCase() + computerDifficulty.slice(1);
+            if (vsComputer && currentPlayer === 'O' && gameActive) {
+                setTimeout(computerMove, 500);
+            }
+        });
+        
+        // Reset game
+        resetButton.addEventListener('click', initGame);
+        
+        // Initialize the game
+        initGame();
     }
     
-    // Memory Match Game Implementation
+    // Memory Match Game with Auto Player
     function initializeMemoryMatch() {
         const memoryBoard = document.getElementById('memory-board');
         const resetButton = document.getElementById('reset-memory');
+        const modeToggle = document.getElementById('toggle-memory-mode');
+        const modeBtn = document.getElementById('memory-mode-btn');
         const moveCountDisplay = document.getElementById('move-count');
         const matchCountDisplay = document.getElementById('match-count');
+        const timerDisplay = document.getElementById('timer');
         
-        const symbols = ['★', '❤', '▲', '◆', '☀', '☁', '⚡', '❄'];
+        // Game state
         let cards = [];
         let flippedCards = [];
         let matchedPairs = 0;
         let moves = 0;
         let canFlip = true;
+        let vsComputer = false;
+        let autoPlaying = false;
+        let timer = 0;
+        let timerInterval = null;
+        let gridSize = '4x5';
+        let theme = 'symbols';
         
-        function initializeGame() {
-            // Create pairs of symbols
-            cards = [...symbols, ...symbols];
+        // Symbols for different themes
+        const themes = {
+            symbols: ['★', '❤', '▲', '◆', '☀', '☁', '⚡', '❄', '✿', '♫', '☂', '♠', '♣', '♥', '♦'],
+            animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵'],
+            numbers: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15']
+        };
+        
+        // Initialize game
+        function initGame() {
+            // Clear previous timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Get settings
+            gridSize = document.getElementById('memory-grid')?.value || '4x5';
+            theme = document.getElementById('memory-theme')?.value || 'symbols';
+            
+            // Determine grid dimensions
+            let rows, cols, totalPairs;
+            switch(gridSize) {
+                case '4x4': rows = 4; cols = 4; totalPairs = 8; break;
+                case '4x5': rows = 4; cols = 5; totalPairs = 10; break;
+                case '5x6': rows = 5; cols = 6; totalPairs = 15; break;
+                default: rows = 4; cols = 5; totalPairs = 10;
+            }
+            
+            // Update memory board grid
+            memoryBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            memoryBoard.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+            memoryBoard.style.width = cols * 100 + (cols - 1) * 15 + 'px';
+            memoryBoard.style.height = rows * 100 + (rows - 1) * 15 + 'px';
+            
+            // Reset game state
+            const symbolSet = themes[theme] || themes.symbols;
+            const selectedSymbols = symbolSet.slice(0, totalPairs);
+            cards = [...selectedSymbols, ...selectedSymbols];
             
             // Shuffle cards
-            for (let i = cards.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [cards[i], cards[j]] = [cards[j], cards[i]];
-            }
+            shuffleArray(cards);
             
             flippedCards = [];
             matchedPairs = 0;
             moves = 0;
             canFlip = true;
+            autoPlaying = false;
+            timer = 0;
             
+            // Update displays
             updateStats();
-            renderMemoryBoard();
+            
+            // Start timer
+            timerInterval = setInterval(() => {
+                timer++;
+                timerDisplay.textContent = `${timer}s`;
+            }, 1000);
+            
+            // Render board
+            renderBoard();
+            
+            // If auto-play mode is on
+            if (vsComputer) {
+                setTimeout(startAutoPlay, 2000);
+            }
         }
         
-        function renderMemoryBoard() {
+        // Shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        // Render board
+        function renderBoard() {
             memoryBoard.innerHTML = '';
             
             cards.forEach((symbol, index) => {
                 const card = document.createElement('div');
                 card.className = 'memory-card';
+                if (flippedCards.some(c => c.index === index) || cards[index] === null) {
+                    card.classList.add('flipped');
+                }
+                if (cards[index] === null) {
+                    card.classList.add('matched');
+                }
+                
                 card.dataset.index = index;
                 card.dataset.symbol = symbol;
                 
@@ -348,17 +789,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 card.appendChild(cardFront);
                 card.appendChild(cardBack);
                 
-                card.addEventListener('click', () => flipCard(card, index));
+                if (cards[index] !== null && !card.classList.contains('matched')) {
+                    card.addEventListener('click', () => flipCard(card, index));
+                }
+                
                 memoryBoard.appendChild(card);
             });
         }
         
+        // Flip card
         function flipCard(card, index) {
-            // Don't allow flipping if card is already flipped or matched, or if we're waiting to flip back
             if (card.classList.contains('flipped') || 
                 card.classList.contains('matched') || 
                 !canFlip || 
-                flippedCards.length >= 2) return;
+                flippedCards.length >= 2 ||
+                autoPlaying) return;
             
             card.classList.add('flipped');
             flippedCards.push({card, index, symbol: cards[index]});
@@ -373,6 +818,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (card1.symbol === card2.symbol) {
                     // Match found
                     setTimeout(() => {
+                        cards[card1.index] = null;
+                        cards[card2.index] = null;
                         card1.card.classList.add('matched');
                         card2.card.classList.add('matched');
                         flippedCards = [];
@@ -381,12 +828,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateStats();
                         
                         // Check if game is complete
-                        if (matchedPairs === symbols.length) {
+                        if (matchedPairs === cards.filter(c => c === null).length / 2) {
+                            clearInterval(timerInterval);
                             setTimeout(() => {
-                                alert(`Congratulations! You completed the game in ${moves} moves!`);
+                                alert(`Congratulations! You completed the game in ${moves} moves and ${timer} seconds!`);
                             }, 500);
                         }
-                    }, 500);
+                    }, 800);
                 } else {
                     // No match, flip back after delay
                     setTimeout(() => {
@@ -399,14 +847,241 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        function updateStats() {
-            moveCountDisplay.textContent = moves;
-            matchCountDisplay.textContent = `${matchedPairs}/${symbols.length}`;
+        // Start auto-play
+        function startAutoPlay() {
+            if (!vsComputer || autoPlaying) return;
+            
+            autoPlaying = true;
+            const cardElements = document.querySelectorAll('.memory-card:not(.matched)');
+            
+            if (cardElements.length === 0) return;
+            
+            // Computer memory (remembers card positions)
+            const computerMemory = {};
+            let firstCard = null;
+            
+            function computerTurn() {
+                if (!autoPlaying || matchedPairs === cards.filter(c => c === null).length / 2) {
+                    autoPlaying = false;
+                    return;
+                }
+                
+                // If we have a card waiting to be matched
+                if (firstCard !== null) {
+                    // Look for match in memory
+                    const matchIndex = Object.keys(computerMemory).find(idx => 
+                        computerMemory[idx] === firstCard.symbol && 
+                        idx != firstCard.index && 
+                        cards[idx] !== null
+                    );
+                    
+                    if (matchIndex !== undefined) {
+                        // We know where the match is
+                        setTimeout(() => {
+                            const matchCard = document.querySelector(`.memory-card[data-index="${matchIndex}"]`);
+                            if (matchCard && !matchCard.classList.contains('flipped')) {
+                                simulateFlip(matchCard, parseInt(matchIndex), () => {
+                                    // Match found
+                                    cards[firstCard.index] = null;
+                                    cards[matchIndex] = null;
+                                    matchedPairs++;
+                                    moves++;
+                                    updateStats();
+                                    firstCard = null;
+                                    
+                                    // Check if game is complete
+                                    if (matchedPairs === cards.filter(c => c === null).length / 2) {
+                                        clearInterval(timerInterval);
+                                        autoPlaying = false;
+                                        setTimeout(() => {
+                                            alert(`Computer solved the puzzle in ${moves} moves and ${timer} seconds!`);
+                                        }, 1000);
+                                    } else {
+                                        setTimeout(computerTurn, 800);
+                                    }
+                                });
+                            }
+                        }, 500);
+                        return;
+                    }
+                }
+                
+                // Otherwise, flip a random card
+                const unflippedCards = Array.from(document.querySelectorAll('.memory-card:not(.flipped):not(.matched)'));
+                if (unflippedCards.length === 0) {
+                    autoPlaying = false;
+                    return;
+                }
+                
+                const randomCard = unflippedCards[Math.floor(Math.random() * unflippedCards.length)];
+                const index = parseInt(randomCard.dataset.index);
+                
+                setTimeout(() => {
+                    simulateFlip(randomCard, index, () => {
+                        // Remember this card
+                        computerMemory[index] = cards[index];
+                        
+                        if (firstCard === null) {
+                            // First card flipped
+                            firstCard = {index, symbol: cards[index]};
+                            setTimeout(computerTurn, 800);
+                        } else {
+                            // Second card flipped - check for match
+                            moves++;
+                            updateStats();
+                            
+                            if (cards[index] === firstCard.symbol) {
+                                // Match found
+                                setTimeout(() => {
+                                    cards[firstCard.index] = null;
+                                    cards[index] = null;
+                                    matchedPairs++;
+                                    updateStats();
+                                    firstCard = null;
+                                    
+                                    // Check if game is complete
+                                    if (matchedPairs === cards.filter(c => c === null).length / 2) {
+                                        clearInterval(timerInterval);
+                                        autoPlaying = false;
+                                        setTimeout(() => {
+                                            alert(`Computer solved the puzzle in ${moves} moves and ${timer} seconds!`);
+                                        }, 1000);
+                                    } else {
+                                        setTimeout(computerTurn, 800);
+                                    }
+                                }, 800);
+                            } else {
+                                // No match
+                                setTimeout(() => {
+                                    // Flip both cards back
+                                    const firstCardElement = document.querySelector(`.memory-card[data-index="${firstCard.index}"]`);
+                                    if (firstCardElement) {
+                                        firstCardElement.classList.remove('flipped');
+                                    }
+                                    randomCard.classList.remove('flipped');
+                                    firstCard = null;
+                                    setTimeout(computerTurn, 800);
+                                }, 1000);
+                            }
+                        }
+                    });
+                }, 500);
+            }
+            
+            // Start computer's turn
+            computerTurn();
         }
         
-        resetButton.addEventListener('click', initializeGame);
+        // Simulate card flip (for auto-play)
+        function simulateFlip(card, index, callback) {
+            card.classList.add('flipped', 'auto-flip');
+            setTimeout(() => {
+                card.classList.remove('auto-flip');
+                if (callback) callback();
+            }, 800);
+        }
+        
+        // Update stats
+        function updateStats() {
+            moveCountDisplay.textContent = moves;
+            const totalPairs = cards.filter(c => c !== null).length / 2 + matchedPairs;
+            matchCountDisplay.textContent = `${matchedPairs}/${totalPairs}`;
+        }
+        
+        // Toggle auto-play mode
+        modeToggle.addEventListener('click', () => {
+            vsComputer = !vsComputer;
+            modeBtn.textContent = vsComputer ? 'Manual Play' : 'Auto Play';
+            
+            if (vsComputer) {
+                // Stop any ongoing auto-play
+                autoPlaying = false;
+                // Start new game with auto-play
+                initGame();
+            } else {
+                // Stop auto-play
+                autoPlaying = false;
+            }
+        });
+        
+        // Reset game
+        resetButton.addEventListener('click', () => {
+            if (timerInterval) clearInterval(timerInterval);
+            initGame();
+        });
         
         // Initialize the game
-        initializeGame();
+        initGame();
+    }
+    
+    // Settings functionality
+    function initializeSettings() {
+        const saveButton = document.getElementById('save-settings');
+        const themeSelect = document.getElementById('theme-select');
+        
+        // Load saved settings
+        loadSettings();
+        
+        // Save settings
+        saveButton.addEventListener('click', () => {
+            saveSettings();
+            alert('Settings saved! Some changes may require restarting games.');
+        });
+        
+        // Theme change
+        themeSelect.addEventListener('change', (e) => {
+            const theme = e.target.value;
+            document.body.className = `${theme}-theme`;
+        });
+    }
+    
+    // Load settings from localStorage
+    function loadSettings() {
+        const savedTheme = localStorage.getItem('gameTheme') || 'dark';
+        document.body.className = `${savedTheme}-theme`;
+        document.getElementById('theme-select').value = savedTheme;
+        
+        // Load other settings
+        const settings = JSON.parse(localStorage.getItem('gameSettings') || '{}');
+        
+        if (settings.chessDifficulty) {
+            document.getElementById('chess-difficulty').value = settings.chessDifficulty;
+        }
+        
+        if (settings.tttStartPlayer) {
+            document.getElementById('ttt-start-player').value = settings.tttStartPlayer;
+        }
+        
+        if (settings.memoryGrid) {
+            document.getElementById('memory-grid').value = settings.memoryGrid;
+        }
+        
+        if (settings.memoryTheme) {
+            document.getElementById('memory-theme').value = settings.memoryTheme;
+        }
+        
+        if (settings.animationSpeed) {
+            document.getElementById('animation-speed').value = settings.animationSpeed;
+        }
+    }
+    
+    // Save settings to localStorage
+    function saveSettings() {
+        const settings = {
+            theme: document.getElementById('theme-select').value,
+            chessDifficulty: document.getElementById('chess-difficulty').value,
+            chessHints: document.getElementById('chess-hints').checked,
+            tttStartPlayer: document.getElementById('ttt-start-player').value,
+            tttSounds: document.getElementById('ttt-sounds').checked,
+            memoryGrid: document.getElementById('memory-grid').value,
+            memoryTheme: document.getElementById('memory-theme').value,
+            animationSpeed: document.getElementById('animation-speed').value
+        };
+        
+        localStorage.setItem('gameSettings', JSON.stringify(settings));
+        localStorage.setItem('gameTheme', settings.theme);
+        
+        // Apply theme immediately
+        document.body.className = `${settings.theme}-theme`;
     }
 });
