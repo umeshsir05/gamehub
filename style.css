@@ -1,0 +1,417 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #f1f1f1;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+    color: #4cc9f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #b0b0d0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.tab {
+    padding: 15px 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 10px;
+    color: #e0e0ff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.tab:hover {
+    background: rgba(76, 201, 240, 0.2);
+    transform: translateY(-3px);
+}
+
+.tab.active {
+    background: #4cc9f0;
+    color: #16213e;
+    box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+}
+
+.game-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    margin-bottom: 30px;
+}
+
+.game-content {
+    display: none;
+}
+
+.game-content.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.game-header h2 {
+    font-size: 2rem;
+    color: #4cc9f0;
+}
+
+.game-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.player-info {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+}
+
+.player-label {
+    color: #b0b0d0;
+    margin-right: 8px;
+}
+
+.player-turn {
+    font-weight: 700;
+    color: #4cc9f0;
+}
+
+.game-status {
+    font-weight: 600;
+    color: #72efdd;
+    font-size: 1.1rem;
+}
+
+.game-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 12px 24px;
+    background: #4361ee;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:hover {
+    background: #3a56d4;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+}
+
+/* Chess Board */
+.chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: 500px;
+    height: 500px;
+    margin: 0 auto 30px;
+    border: 3px solid #333;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.chess-square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.chess-square:hover {
+    opacity: 0.9;
+}
+
+.light-square {
+    background-color: #f0d9b5;
+}
+
+.dark-square {
+    background-color: #b58863;
+}
+
+.selected {
+    background-color: rgba(67, 97, 238, 0.6) !important;
+}
+
+.possible-move {
+    background-color: rgba(114, 239, 221, 0.6) !important;
+}
+
+/* Tic-Tac-Toe Board */
+.ttt-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 400px;
+    height: 400px;
+    margin: 0 auto 30px;
+    gap: 5px;
+    background-color: #333;
+}
+
+.ttt-cell {
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 70px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #f1f1f1;
+}
+
+.ttt-cell:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.x-marker {
+    color: #4cc9f0;
+}
+
+.o-marker {
+    color: #f72585;
+}
+
+.winning-cell {
+    background-color: rgba(114, 239, 221, 0.3) !important;
+}
+
+/* Memory Match Board */
+.memory-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 15px;
+    width: 500px;
+    height: 500px;
+    margin: 0 auto 30px;
+}
+
+.memory-card {
+    background-color: #4361ee;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+    position: relative;
+    user-select: none;
+}
+
+.memory-card.flipped {
+    transform: rotateY(180deg);
+    background-color: #3a0ca3;
+}
+
+.memory-card.matched {
+    background-color: #2a9d8f;
+    cursor: default;
+}
+
+.memory-card-front, .memory-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.memory-card-front {
+    background-color: #4361ee;
+    color: white;
+    transform: rotateY(180deg);
+}
+
+.memory-card-back {
+    background-color: #3a0ca3;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 30px;
+}
+
+.game-instructions {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.game-instructions h3 {
+    color: #72efdd;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.game-instructions p {
+    line-height: 1.6;
+    color: #b0b0d0;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #b0b0d0;
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+footer p {
+    margin-bottom: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chess-board, .ttt-board, .memory-board {
+        width: 90vw;
+        height: 90vw;
+        max-width: 400px;
+        max-height: 400px;
+    }
+    
+    .chess-square {
+        font-size: 30px;
+    }
+    
+    .ttt-cell {
+        font-size: 50px;
+    }
+    
+    .memory-card {
+        font-size: 30px;
+    }
+    
+    header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .tab {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+    
+    .game-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .game-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .chess-board, .ttt-board, .memory-board {
+        width: 95vw;
+        height: 95vw;
+    }
+    
+    .tabs {
+        flex-direction: column;
+    }
+    
+    .tab {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .game-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .game-controls {
+        width: 100%;
+    }
+    
+    .btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
