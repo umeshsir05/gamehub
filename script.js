@@ -100,6 +100,29 @@ document.addEventListener('DOMContentLoaded', function() {
         let vsComputer = false;
         let gameActive = true;
         let computerThinking = false;
+        let lastMove = null;
+        
+        // Piece values for computer AI
+        const pieceValues = {
+            '♙': 1, '♟': 1,
+            '♘': 3, '♞': 3,
+            '♗': 3, '♝': 3,
+            '♖': 5, '♜': 5,
+            '♕': 9, '♛': 9,
+            '♔': 100, '♚': 100
+        };
+        
+        // Position values for AI (center control)
+        const positionValues = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0],
+            [0, 0.1, 0.3, 0.4, 0.4, 0.3, 0.1, 0],
+            [0, 0.1, 0.3, 0.5, 0.5, 0.3, 0.1, 0],
+            [0, 0.1, 0.3, 0.5, 0.5, 0.3, 0.1, 0],
+            [0, 0.1, 0.3, 0.4, 0.4, 0.3, 0.1, 0],
+            [0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0]
+        ];
         
         // Initial board setup
         const initialBoard = [
@@ -120,8 +143,14 @@ document.addEventListener('DOMContentLoaded', function() {
             currentPlayer = 'white';
             gameActive = true;
             computerThinking = false;
+            lastMove = null;
             renderChessBoard();
             updateStatus();
+            
+            // If computer starts first
+            if (vsComputer && currentPlayer === 'black') {
+                setTimeout(computerMove, 1000);
+            }
         }
         
         // Render chess board
@@ -134,6 +163,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     square.className = `chess-square ${(row + col) % 2 === 0 ? 'light-square' : 'dark-square'}`;
                     square.dataset.row = row;
                     square.dataset.col = col;
+                    
+                    // Highlight last move
+                    if (lastMove && 
+                        ((lastMove.fromRow === row && lastMove.fromCol === col) ||
+                         (lastMove.toRow === row && lastMove.toCol === col))) {
+                        square.classList.add('last-move');
+                    }
                     
                     if (boardState[row][col]) {
                         square.textContent = boardState[row][col];
@@ -172,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Check if the move is valid
                 if (isValidMove(prevRow, prevCol, row, col)) {
                     // Make the move
-                    makeMove(prevRow, prevCol, row, col);
+                    makeMove(prevRow, prevCol, row, col, true);
                     
                     // If playing against computer and it's computer's turn
                     if (vsComputer && currentPlayer === 'black' && gameActive) {
@@ -206,10 +242,15 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedPiece = [row, col];
             
             const square = document.querySelector(`.chess-square[data-row="${row}"][data-col="${col}"]`);
-            square.classList.add('selected');
-            
-            // Highlight possible moves
-            highlightPossibleMoves(row, col);
+            if (square) {
+                square.classList.add('selected');
+                
+                // Highlight possible moves if hints are enabled
+                const showHints = document.getElementById('chess-hints')?.checked ?? true;
+                if (showHints) {
+                    highlightPossibleMoves(row, col);
+                }
+            }
         }
         
         // Clear selection
@@ -220,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedPiece = null;
         }
         
-        // Highlight possible moves (simplified)
+        // Highlight possible moves
         function highlightPossibleMoves(row, col) {
             const piece = boardState[row][col];
             const moves = getPossibleMoves(row, col, piece);
@@ -233,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Get possible moves (simplified logic)
+        // Get possible moves
         function getPossibleMoves(row, col, piece) {
             const moves = [];
             const isWhite = piece.charCodeAt(0) > 9817;
@@ -241,16 +282,18 @@ document.addEventListener('DOMContentLoaded', function() {
             // Pawn moves
             if (piece === '♙' || piece === '♟') {
                 const direction = isWhite ? -1 : 1;
-                // Move forward
+                const startRow = isWhite ? 6 : 1;
+                
+                // Move forward one square
                 if (isInBounds(row + direction, col) && !boardState[row + direction][col]) {
                     moves.push([row + direction, col]);
-                    // Initial double move
-                    if ((isWhite && row === 6) || (!isWhite && row === 1)) {
-                        if (!boardState[row + 2 * direction][col]) {
-                            moves.push([row + 2 * direction, col]);
-                        }
+                    
+                    // Move forward two squares from starting position
+                    if (row === startRow && !boardState[row + 2 * direction][col]) {
+                        moves.push([row + 2 * direction, col]);
                     }
                 }
+                
                 // Captures
                 [-1, 1].forEach(dc => {
                     const newRow = row + direction;
@@ -261,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
-            // Knight moves (simplified)
+            // Knight moves
             else if (piece === '♘' || piece === '♞') {
                 const knightMoves = [
                     [-2, -1], [-2, 1], [-1, -2], [-1, 2],
@@ -277,10 +320,76 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
-            // Other pieces - allow adjacent moves for simplicity
-            else {
-                const directions = [[-1,0], [1,0], [0,-1], [0,1], [-1,-1], [-1,1], [1,-1], [1,1]];
-                for (const [dr, dc] of directions) {
+            // Rook moves (vertical and horizontal)
+            else if (piece === '♖' || piece === '♜') {
+                const directions = [[-1,0], [1,0], [0,-1], [0,1]];
+                directions.forEach(([dr, dc]) => {
+                    let newRow = row + dr;
+                    let newCol = col + dc;
+                    while (isInBounds(newRow, newCol)) {
+                        if (!boardState[newRow][newCol]) {
+                            moves.push([newRow, newCol]);
+                        } else {
+                            if (isWhite !== (boardState[newRow][newCol].charCodeAt(0) > 9817)) {
+                                moves.push([newRow, newCol]);
+                            }
+                            break;
+                        }
+                        newRow += dr;
+                        newCol += dc;
+                    }
+                });
+            }
+            // Bishop moves (diagonal)
+            else if (piece === '♗' || piece === '♝') {
+                const directions = [[-1,-1], [-1,1], [1,-1], [1,1]];
+                directions.forEach(([dr, dc]) => {
+                    let newRow = row + dr;
+                    let newCol = col + dc;
+                    while (isInBounds(newRow, newCol)) {
+                        if (!boardState[newRow][newCol]) {
+                            moves.push([newRow, newCol]);
+                        } else {
+                            if (isWhite !== (boardState[newRow][newCol].charCodeAt(0) > 9817)) {
+                                moves.push([newRow, newCol]);
+                            }
+                            break;
+                        }
+                        newRow += dr;
+                        newCol += dc;
+                    }
+                });
+            }
+            // Queen moves (combines rook and bishop)
+            else if (piece === '♕' || piece === '♛') {
+                const directions = [
+                    [-1,0], [1,0], [0,-1], [0,1],
+                    [-1,-1], [-1,1], [1,-1], [1,1]
+                ];
+                directions.forEach(([dr, dc]) => {
+                    let newRow = row + dr;
+                    let newCol = col + dc;
+                    while (isInBounds(newRow, newCol)) {
+                        if (!boardState[newRow][newCol]) {
+                            moves.push([newRow, newCol]);
+                        } else {
+                            if (isWhite !== (boardState[newRow][newCol].charCodeAt(0) > 9817)) {
+                                moves.push([newRow, newCol]);
+                            }
+                            break;
+                        }
+                        newRow += dr;
+                        newCol += dc;
+                    }
+                });
+            }
+            // King moves (one square in any direction)
+            else if (piece === '♔' || piece === '♚') {
+                const directions = [
+                    [-1,0], [1,0], [0,-1], [0,1],
+                    [-1,-1], [-1,1], [1,-1], [1,1]
+                ];
+                directions.forEach(([dr, dc]) => {
                     const newRow = row + dr;
                     const newCol = col + dc;
                     if (isInBounds(newRow, newCol) && 
@@ -288,7 +397,7 @@ document.addEventListener('DOMContentLoaded', function() {
                          isWhite !== (boardState[newRow][newCol].charCodeAt(0) > 9817))) {
                         moves.push([newRow, newCol]);
                     }
-                }
+                });
             }
             
             return moves;
@@ -308,11 +417,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Make a move
-        function makeMove(fromRow, fromCol, toRow, toCol) {
+        function makeMove(fromRow, fromCol, toRow, toCol, isPlayerMove = false) {
             const piece = boardState[fromRow][fromCol];
             
-            // Highlight computer move if applicable
-            if (vsComputer && currentPlayer === 'white') {
+            // Store last move
+            lastMove = { fromRow, fromCol, toRow, toCol };
+            
+            // Visual feedback for computer moves
+            if (!isPlayerMove && vsComputer) {
                 const fromSquare = document.querySelector(`.chess-square[data-row="${fromRow}"][data-col="${fromCol}"]`);
                 const toSquare = document.querySelector(`.chess-square[data-row="${toRow}"][data-col="${toCol}"]`);
                 if (fromSquare && toSquare) {
@@ -332,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Switch player
             currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
             
-            // Check for checkmate (simplified)
+            // Check for checkmate or stalemate
             checkGameStatus();
             
             clearSelection();
@@ -341,32 +453,87 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Computer move logic
         function computerMove() {
-            if (!gameActive || currentPlayer !== 'black') return;
+            if (!gameActive || currentPlayer !== 'black' || computerThinking) return;
             
             computerThinking = true;
             
             setTimeout(() => {
-                // Find all black pieces
-                const blackPieces = [];
+                // Get all possible moves for black pieces
+                const allMoves = [];
+                
                 for (let row = 0; row < 8; row++) {
                     for (let col = 0; col < 8; col++) {
                         const piece = boardState[row][col];
                         if (piece && piece.charCodeAt(0) <= 9817) { // Black pieces
                             const moves = getPossibleMoves(row, col, piece);
-                            if (moves.length > 0) {
-                                blackPieces.push({row, col, piece, moves});
-                            }
+                            moves.forEach(([toRow, toCol]) => {
+                                // Evaluate move
+                                let score = 0;
+                                
+                                // Capture scoring
+                                const targetPiece = boardState[toRow][toCol];
+                                if (targetPiece) {
+                                    score += pieceValues[targetPiece] || 0;
+                                }
+                                
+                                // Position scoring (center control)
+                                score += positionValues[toRow][toCol] || 0;
+                                
+                                // Piece development (move pieces from back rank)
+                                if (row === 0 || row === 1) {
+                                    score += 0.2;
+                                }
+                                
+                                // Avoid moving king unnecessarily
+                                if (piece === '♚' && !targetPiece) {
+                                    score -= 0.5;
+                                }
+                                
+                                allMoves.push({
+                                    fromRow: row,
+                                    fromCol: col,
+                                    toRow,
+                                    toCol,
+                                    piece,
+                                    score
+                                });
+                            });
                         }
                     }
                 }
                 
-                if (blackPieces.length > 0) {
-                    // Select random piece and move
-                    const randomPiece = blackPieces[Math.floor(Math.random() * blackPieces.length)];
-                    const randomMove = randomPiece.moves[Math.floor(Math.random() * randomPiece.moves.length)];
+                if (allMoves.length > 0) {
+                    // Sort moves by score (highest first)
+                    allMoves.sort((a, b) => b.score - a.score);
                     
-                    // Make the move
-                    makeMove(randomPiece.row, randomPiece.col, randomMove[0], randomMove[1]);
+                    // Get difficulty setting
+                    const difficulty = document.getElementById('chess-difficulty')?.value || 'medium';
+                    
+                    let selectedMove;
+                    if (difficulty === 'easy') {
+                        // Easy: Random move from all moves
+                        selectedMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+                    } else if (difficulty === 'medium') {
+                        // Medium: Usually best move, sometimes random
+                        if (Math.random() > 0.7) {
+                            const randomIndex = Math.floor(Math.random() * Math.min(3, allMoves.length));
+                            selectedMove = allMoves[randomIndex];
+                        } else {
+                            selectedMove = allMoves[0];
+                        }
+                    } else {
+                        // Hard: Best move
+                        selectedMove = allMoves[0];
+                    }
+                    
+                    // Make the computer move
+                    makeMove(
+                        selectedMove.fromRow, 
+                        selectedMove.fromCol, 
+                        selectedMove.toRow, 
+                        selectedMove.toCol,
+                        false
+                    );
                 }
                 
                 computerThinking = false;
@@ -375,23 +542,69 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Check game status
         function checkGameStatus() {
-            // Simplified: Check if king is captured
+            // Check if kings are on the board
             let whiteKing = false;
             let blackKing = false;
+            let whitePieces = 0;
+            let blackPieces = 0;
             
             for (let row = 0; row < 8; row++) {
                 for (let col = 0; col < 8; col++) {
-                    if (boardState[row][col] === '♔') whiteKing = true;
-                    if (boardState[row][col] === '♚') blackKing = true;
+                    const piece = boardState[row][col];
+                    if (piece) {
+                        if (piece === '♔') whiteKing = true;
+                        if (piece === '♚') blackKing = true;
+                        
+                        if (piece.charCodeAt(0) > 9817) {
+                            whitePieces++;
+                        } else {
+                            blackPieces++;
+                        }
+                    }
                 }
             }
             
             if (!whiteKing) {
-                alert('Black wins!');
-                gameActive = false;
+                setTimeout(() => {
+                    if (gameActive) {
+                        alert('Checkmate! Black wins!');
+                        gameActive = false;
+                    }
+                }, 100);
             } else if (!blackKing) {
-                alert('White wins!');
-                gameActive = false;
+                setTimeout(() => {
+                    if (gameActive) {
+                        alert('Checkmate! White wins!');
+                        gameActive = false;
+                    }
+                }, 100);
+            }
+            // Stalemate detection (simplified)
+            else if ((currentPlayer === 'white' && whitePieces === 1) || 
+                     (currentPlayer === 'black' && blackPieces === 1)) {
+                // Check if the player has any valid moves
+                let hasValidMoves = false;
+                
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const piece = boardState[row][col];
+                        if (piece && isCurrentPlayerPiece(piece)) {
+                            const moves = getPossibleMoves(row, col, piece);
+                            if (moves.length > 0) {
+                                hasValidMoves = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (hasValidMoves) break;
+                }
+                
+                if (!hasValidMoves && gameActive) {
+                    setTimeout(() => {
+                        alert('Stalemate! Game ends in a draw.');
+                        gameActive = false;
+                    }, 100);
+                }
             }
         }
         
@@ -399,6 +612,11 @@ document.addEventListener('DOMContentLoaded', function() {
         function updateStatus() {
             playerDisplay.textContent = currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1);
             playerDisplay.style.color = currentPlayer === 'white' ? '#f1f1f1' : '#333';
+            
+            // If it's computer's turn and we're in vsComputer mode, trigger computer move
+            if (vsComputer && currentPlayer === 'black' && gameActive && !computerThinking) {
+                setTimeout(computerMove, 800);
+            }
         }
         
         // Toggle computer mode
@@ -1048,8 +1266,16 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('chess-difficulty').value = settings.chessDifficulty;
         }
         
+        if (settings.chessHints !== undefined) {
+            document.getElementById('chess-hints').checked = settings.chessHints;
+        }
+        
         if (settings.tttStartPlayer) {
             document.getElementById('ttt-start-player').value = settings.tttStartPlayer;
+        }
+        
+        if (settings.tttSounds !== undefined) {
+            document.getElementById('ttt-sounds').checked = settings.tttSounds;
         }
         
         if (settings.memoryGrid) {
@@ -1084,4 +1310,24 @@ document.addEventListener('DOMContentLoaded', function() {
         // Apply theme immediately
         document.body.className = `${settings.theme}-theme`;
     }
+    
+    // Add CSS for chess highlights
+    const style = document.createElement('style');
+    style.textContent = `
+        .last-move {
+            background-color: rgba(255, 255, 100, 0.5) !important;
+        }
+        
+        .check-square {
+            background-color: rgba(255, 50, 50, 0.7) !important;
+            animation: pulseRed 1s infinite;
+        }
+        
+        @keyframes pulseRed {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    `;
+    document.head.appendChild(style);
 });
