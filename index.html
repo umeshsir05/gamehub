@@ -3,166 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Game with Auto-Move</title>
+    <title>Space Blasters - Mobile Game</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Mobile Toggle Menu -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">♔ ChessMaster</div>
-            <button class="menu-toggle" id="menuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="nav-menu" id="navMenu">
-                <ul>
-                    <li><a href="#" class="active"><i class="fas fa-home"></i> Game</a></li>
-                    <li><a href="#"><i class="fas fa-cogs"></i> Settings</a></li>
-                    <li><a href="#"><i class="fas fa-robot"></i> AI Level</a></li>
-                    <li><a href="#"><i class="fas fa-history"></i> History</a></li>
-                    <li><a href="#"><i class="fas fa-question-circle"></i> Help</a></li>
-                </ul>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-gamepad"></i> Space Blasters</h1>
+            <p class="subtitle">Defend Earth from alien invaders!</p>
+        </header>
+
+        <div class="game-area">
+            <div class="stats">
+                <div class="stat-box">
+                    <span class="stat-label">SCORE</span>
+                    <span id="score" class="stat-value">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">LIVES</span>
+                    <span id="lives" class="stat-value">3</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">LEVEL</span>
+                    <span id="level" class="stat-value">1</span>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+
+            <div class="buttons">
+                <button id="startBtn" class="btn btn-start">
+                    <i class="fas fa-play"></i> Start Game
+                </button>
+                <button id="pauseBtn" class="btn btn-pause">
+                    <i class="fas fa-pause"></i> Pause
+                </button>
+                <button id="resetBtn" class="btn btn-reset">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Game Container -->
-    <div class="container">
-        <div class="game-wrapper">
-            <!-- Left Panel - Game Controls -->
-            <div class="left-panel">
-                <div class="game-info">
-                    <h2><i class="fas fa-chess-board"></i> Game Status</h2>
-                    <div class="status-box">
-                        <div class="player-turn">
-                            <span class="turn-label">Current Turn:</span>
-                            <span id="currentTurn" class="turn white-turn">White</span>
-                        </div>
-                        <div class="move-count">
-                            <span class="move-label">Moves:</span>
-                            <span id="moveCount">0</span>
-                        </div>
-                        <div class="game-status">
-                            <span class="status-label">Status:</span>
-                            <span id="gameStatus" class="status-playing">Playing</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="controls">
-                    <h2><i class="fas fa-gamepad"></i> Controls</h2>
-                    <div class="button-group">
-                        <button id="aiMoveBtn" class="btn btn-primary">
-                            <i class="fas fa-robot"></i> AI Move
-                        </button>
-                        <button id="resetBtn" class="btn btn-secondary">
-                            <i class="fas fa-redo"></i> Reset Game
-                        </button>
-                        <button id="hintBtn" class="btn btn-hint">
-                            <i class="fas fa-lightbulb"></i> Show Hint
-                        </button>
-                    </div>
-
-                    <div class="difficulty">
-                        <h3><i class="fas fa-brain"></i> AI Difficulty</h3>
-                        <div class="difficulty-levels">
-                            <button class="level-btn active" data-level="1">Easy</button>
-                            <button class="level-btn" data-level="2">Medium</button>
-                            <button class="level-btn" data-level="3">Hard</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="move-history">
-                    <h2><i class="fas fa-history"></i> Move History</h2>
-                    <div class="history-list" id="historyList">
-                        <!-- Moves will appear here -->
-                    </div>
-                </div>
+        <!-- Mobile Touch Controls -->
+        <div class="mobile-controls">
+            <div class="movement-controls">
+                <button class="control-btn move-left">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button class="control-btn move-right">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
+            <button class="control-btn shoot-btn">
+                <i class="fas fa-space-shuttle"></i> SHOOT
+            </button>
+        </div>
 
-            <!-- Center - Chess Board -->
-            <div class="center-panel">
-                <h1 class="game-title">♚ Chess Game ♔</h1>
-                <div class="chessboard-container">
-                    <div id="chessboard"></div>
-                    <div class="board-labels">
-                        <div class="files">
-                            <span>a</span><span>b</span><span>c</span><span>d</span>
-                            <span>e</span><span>f</span><span>g</span><span>h</span>
-                        </div>
-                        <div class="ranks">
-                            <span>8</span><span>7</span><span>6</span><span>5</span>
-                            <span>4</span><span>3</span><span>2</span><span>1</span>
-                        </div>
-                    </div>
+        <div class="instructions">
+            <h2><i class="fas fa-info-circle"></i> Mobile Controls</h2>
+            <div class="instructions-content">
+                <div class="instruction">
+                    <i class="fas fa-arrows-alt-h"></i>
+                    <h3>Move</h3>
+                    <p>Use LEFT/RIGHT buttons or swipe on screen</p>
                 </div>
-                
-                <div class="player-indicators">
-                    <div class="player black-player">
-                        <i class="fas fa-chess-king"></i> Black (AI)
-                    </div>
-                    <div class="player white-player active">
-                        <i class="fas fa-chess-king"></i> White (You)
-                    </div>
+                <div class="instruction">
+                    <i class="fas fa-space-shuttle"></i>
+                    <h3>Shoot</h3>
+                    <p>Press SHOOT button or tap on screen</p>
                 </div>
-            </div>
-
-            <!-- Right Panel - Game Stats -->
-            <div class="right-panel">
-                <div class="stats">
-                    <h2><i class="fas fa-chart-bar"></i> Game Stats</h2>
-                    <div class="stat-item">
-                        <span class="stat-label">White Pieces:</span>
-                        <span id="whitePieces" class="stat-value">16</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Black Pieces:</span>
-                        <span id="blackPieces" class="stat-value">16</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Time Elapsed:</span>
-                        <span id="gameTime" class="stat-value">00:00</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">AI Thinking:</span>
-                        <span id="aiThinking" class="stat-value">No</span>
-                    </div>
-                </div>
-
-                <div class="instructions">
-                    <h2><i class="fas fa-info-circle"></i> How to Play</h2>
-                    <ul>
-                        <li>Click on a piece to select it</li>
-                        <li>Click on a highlighted square to move</li>
-                        <li>Use "AI Move" for computer's turn</li>
-                        <li>Change difficulty as needed</li>
-                        <li>Reset button starts a new game</li>
-                    </ul>
-                </div>
-
-                <div class="piece-captured">
-                    <h2><i class="fas fa-skull-crossbones"></i> Captured Pieces</h2>
-                    <div class="captured-container">
-                        <div class="captured-white" id="capturedWhite">
-                            <!-- White captured pieces -->
-                        </div>
-                        <div class="captured-black" id="capturedBlack">
-                            <!-- Black captured pieces -->
-                        </div>
-                    </div>
+                <div class="instruction">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Orientation</h3>
+                    <p>Turn phone sideways for best experience</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>♔ Chess Game with Auto-Move | Made with HTML, CSS & JavaScript</p>
-        <p class="mobile-note"><i class="fas fa-mobile-alt"></i> Mobile-friendly design</p>
-    </footer>
-
-    <script src="script.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
